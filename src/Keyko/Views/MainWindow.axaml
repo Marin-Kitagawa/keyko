@@ -1,0 +1,119 @@
+<Window x:Class="Keyko.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Keyko.ViewModels"
+        x:DataType="vm:MainViewModel"
+        x:CompileBindings="True"
+        Title="Keyko"
+        Width="1180" Height="740" MinWidth="1020" MinHeight="660"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="48"
+        SystemDecorations="Full"
+        Icon="avares://Keyko/Assets/app.ico">
+
+  <Grid x:Name="RootGrid" RowDefinitions="48,*">
+
+    <!-- fallback wallpaper: only visible in selftest captures -->
+    <Border x:Name="BaseWallpaper" Grid.RowSpan="2" Background="{StaticResource BaseGradient}" IsVisible="False" />
+
+    <ExperimentalAcrylicBorder x:Name="Acrylic" Grid.RowSpan="2" IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                     TintColor="#17121D"
+                                     TintOpacity="0.72"
+                                     MaterialOpacity="0.55" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+
+    <!-- ================= titlebar ================= -->
+    <Panel Grid.Row="0" Margin="16,0,152,0">
+      <Border x:Name="DragZone" Background="Transparent" />
+      <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" IsHitTestVisible="False">
+        <Image Source="avares://Keyko/Assets/logo.png" Width="30" Height="30" VerticalAlignment="Center" />
+        <TextBlock Text="Keyko" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="22" VerticalAlignment="Center" />
+        <Border Classes="kbd" Padding="6,1.5" VerticalAlignment="Center" Opacity="0.8">
+          <TextBlock Text="beta" FontSize="9.5" />
+        </Border>
+        <Border x:Name="AdminBadge" Classes="kbd" Padding="6,1.5" VerticalAlignment="Center"
+                IsVisible="False" ToolTip.Tip="Running as administrator — hotkeys reach elevated windows">
+          <TextBlock Text="admin" FontSize="9.5" />
+        </Border>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <Button x:Name="ThemeToggle" Classes="icon ghost" ToolTip.Tip="Toggle theme">
+          <TextBlock x:Name="ThemeToggleGlyph" Classes="glyph" Text="&#xE706;" FontSize="13" />
+        </Button>
+        <Button x:Name="OpenSettings" Classes="icon ghost" ToolTip.Tip="Settings">
+          <TextBlock Classes="glyph" Text="&#xE713;" FontSize="13" />
+        </Button>
+      </StackPanel>
+    </Panel>
+
+    <!-- ================= body ================= -->
+    <Grid Grid.Row="1" ColumnDefinitions="234,*" Margin="2,0,2,2">
+
+      <!-- sidebar -->
+      <Border Classes="card panel" Margin="10,2,4,10">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Top" Spacing="3">
+            <Button x:Name="NavShortcuts" Classes="navItem" Command="{Binding ShowShortcutsCommand}"
+                    Classes.active="{Binding IsOnShortcuts}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Classes="glyph" Text="&#xE765;" VerticalAlignment="Center" />
+                <TextBlock Text="Shortcuts" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="19" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+            <Button x:Name="NavSettings" Classes="navItem" Command="{Binding ShowSettingsCommand}"
+                    Classes.active="{Binding IsOnSettings}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Classes="glyph" Text="&#xE713;" VerticalAlignment="Center" />
+                <TextBlock Text="Settings" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="19" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+            <Button x:Name="NavAbout" Classes="navItem" Command="{Binding ShowAboutCommand}"
+                    Classes.active="{Binding IsOnAbout}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Classes="glyph" Text="&#xE946;" VerticalAlignment="Center" />
+                <TextBlock Text="About" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="19" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <Border DockPanel.Dock="Bottom" CornerRadius="12" Padding="13,11"
+                  Background="{StaticResource ChipBg}" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+            <StackPanel Spacing="7">
+              <TextBlock Text="KEYKO" Classes="caption" />
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding ActiveCount}" FontSize="17" FontWeight="Normal"
+                           Foreground="{StaticResource Accent2}" />
+                <TextBlock Text="of" Classes="ter" FontSize="11.5" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding TotalCount}" FontSize="17" FontWeight="Normal" />
+                <TextBlock Text="hotkeys ready" Classes="ter" FontSize="11.5" VerticalAlignment="Center" />
+              </StackPanel>
+              <Rectangle Height="1" Fill="{StaticResource Divider}" />
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Classes="glyph g12" Text="&#xE768;" Foreground="{StaticResource TextTertiary}" />
+                <TextBlock Text="{Binding TotalRuns, StringFormat='{}{0} total launches'}" Classes="ter" FontSize="11" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Panel />
+        </DockPanel>
+      </Border>
+
+      <!-- content -->
+      <Border Grid.Column="1" Margin="4,2,10,10">
+        <TransitioningContentControl x:Name="Pages">
+          <TransitioningContentControl.PageTransition>
+            <CrossFade Duration="0:0:0.18" />
+          </TransitioningContentControl.PageTransition>
+        </TransitioningContentControl>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

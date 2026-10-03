@@ -1,0 +1,52 @@
+<UserControl x:Class="Keyko.Views.Pages.AboutPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            >
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
+    <StackPanel Spacing="14" Margin="2,0,0,14" MaxWidth="860" HorizontalAlignment="Left">
+
+      <TextBlock Text="About" Classes="h1" Margin="2,0,0,2" />
+
+      <Border Classes="card">
+        <StackPanel Spacing="16">
+          <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+            <Image Source="avares://Keyko/Assets/logo.png" Width="72" Height="72" VerticalAlignment="Center" />
+            <StackPanel Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="Keyko ♡" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="38" />
+              <TextBlock Text="your cozy little hotkey friend — born from Clavier+, dressed in pastel."
+                         Classes="sec" FontSize="12.5" />
+              <TextBlock x:Name="VersionText" Text="Version 1.1.0 · Avalonia UI · .NET 10" Classes="ter" FontSize="11" />
+            </StackPanel>
+          </StackPanel>
+
+          <Rectangle Height="1" Fill="{StaticResource Divider}" />
+
+          <TextBlock Text="What Keyko can do" Classes="h2" />
+          <StackPanel Spacing="7">
+            <TextBlock Classes="sec" FontSize="12" Text="♡ Global hotkeys for apps, folders, URLs, commands, text snippets and key sequences" />
+            <TextBlock Classes="sec" FontSize="12" Text="♡ Built-in system actions: volume, media, monitor off, quick settings, clipboard history" />
+            <TextBlock Classes="sec" FontSize="12" Text="♡ A live key recorder, per-shortcut toggles, and instant conflict detection" />
+            <TextBlock Classes="sec" FontSize="12" Text="♡ Categories, search, usage stats, duplicate &amp; undo — plus JSON import/export" />
+            <TextBlock Classes="sec" FontSize="12" Text="♡ Cozy dark &amp; light glass themes, 6 pastel accents, adjustable blur" />
+            <TextBlock Classes="sec" FontSize="12" Text="♡ Optional admin mode, tray menu with your favorites, autostart with Windows" />
+          </StackPanel>
+
+          <Rectangle Height="1" Fill="{StaticResource Divider}" />
+
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button x:Name="OpenOriginal" Click="OnOpenOriginal">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Classes="glyph g12" Text="&#xE8A7;" VerticalAlignment="Center" />
+                <TextBlock Text="Clavier+ (the original that inspired Keyko)" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <TextBlock Classes="ter" FontSize="11"
+                     Text="Hotkeys are registered system-wide and fire even when Keyko is tucked away in the tray. Some combinations may be reserved by Windows or other apps — Keyko gently tells you when a registration fails. Take care ♡" />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

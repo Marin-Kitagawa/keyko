@@ -1,0 +1,456 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- ============ base typography ============ -->
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="avares://Keyko/Assets/Fonts/PlayfairDisplay.ttf#Playfair Display, fonts:Inter#Inter, Segoe UI Variable Display, Segoe UI" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="TextBlock.sec">
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+  </Style>
+
+  <Style Selector="TextBlock.ter">
+    <Setter Property="Foreground" Value="{StaticResource TextTertiary}" />
+    <Setter Property="FontFamily" Value="{StaticResource SerifItalic}" />
+  </Style>
+
+  <Style Selector="TextBlock.caption">
+    <Setter Property="Foreground" Value="{StaticResource TextTertiary}" />
+    <Setter Property="FontSize" Value="10.5" />
+  </Style>
+
+  <Style Selector="TextBlock.h1">
+    <Setter Property="FontSize" Value="34" />
+    <Setter Property="FontFamily" Value="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" />
+  </Style>
+
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontSize" Value="23" />
+    <Setter Property="FontFamily" Value="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" />
+  </Style>
+
+  <!-- Segoe Fluent / MDL2 glyph helper -->
+  <Style Selector="TextBlock.glyph">
+    <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
+    <Setter Property="FontSize" Value="15" />
+  </Style>
+
+  <Style Selector="TextBlock.glyph.g12">
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="TextBlock.glyph.g20">
+    <Setter Property="FontSize" Value="20" />
+  </Style>
+
+  <!-- ============ glass cards ============ -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{StaticResource CardBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="Padding" Value="16" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.card.panel">
+    <Setter Property="Background" Value="{StaticResource CardBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="20" />
+    <Setter Property="Padding" Value="10" />
+  </Style>
+
+  <Style Selector="Border.row">
+    <Setter Property="Padding" Value="12" />
+  </Style>
+
+  <Style Selector="Border.row:pointerover">
+    <Setter Property="Background" Value="{StaticResource CardBgHover}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorderHover}" />
+  </Style>
+
+  <Style Selector="Border.kbd">
+    <Setter Property="Background" Value="{StaticResource KbdBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource KbdBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="9" />
+    <Setter Property="Padding" Value="8,3" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Border.kbd > TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource KeycapFont}" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="Foreground" Value="{StaticResource KbdText}" />
+  </Style>
+
+  <Style Selector="Border.chip">
+    <Setter Property="Background" Value="{StaticResource ChipBg}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="11,5" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.chip:pointerover">
+    <Setter Property="Background" Value="{StaticResource ChipBgHover}" />
+  </Style>
+
+  <Style Selector="Border.chip.active">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+  </Style>
+
+  <Style Selector="Border.chip.active > TextBlock">
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Border.chip > TextBlock">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.banner">
+    <Setter Property="Background" Value="{StaticResource WarningBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BannerBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,10" />
+  </Style>
+
+  <!-- category chip as a button -->
+  <Style Selector="Button.chip">
+    <Setter Property="Background" Value="{StaticResource ChipBg}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="12,5" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.12" />
+        <BrushTransition Property="Foreground" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button.chip:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource ChipBgHover}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.chip.active">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.chip.active /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+  </Style>
+
+  <!-- ============ buttons ============ -->
+  <Style Selector="Button">
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="14,7" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+    <Setter Property="Background" Value="{StaticResource ChipBg}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BtnHover}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource ChipBg}" />
+    <Setter Property="Opacity" Value="0.8" />
+  </Style>
+
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{StaticResource AccentGradient}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="38" />
+  </Style>
+
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource AccentGradientHover}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+  </Style>
+
+  <Style Selector="Button.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BtnGhostHover}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.ghost.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource DangerBg}" />
+    <Setter Property="Foreground" Value="{StaticResource Danger}" />
+  </Style>
+
+  <Style Selector="Button.icon">
+    <Setter Property="Width" Value="34" />
+    <Setter Property="Height" Value="34" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="CornerRadius" Value="11" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.swatch">
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Height" Value="40" />
+    <Setter Property="CornerRadius" Value="13" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="BorderBrush" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button.swatch.sel">
+    <Setter Property="BorderBrush" Value="{StaticResource Accent1}" />
+  </Style>
+
+  <Style Selector="Button.navItem">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,9" />
+    <Setter Property="MinHeight" Value="40" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.12" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button.navItem > StackPanel">
+    <Setter Property="Spacing" Value="10" />
+  </Style>
+
+  <Style Selector="Button.navItem > StackPanel > TextBlock.glyph">
+    <Setter Property="Foreground" Value="{StaticResource TextTertiary}" />
+  </Style>
+
+  <Style Selector="Button.navItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BtnGhostHover}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.navItem.active">
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.navItem.active /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+  </Style>
+
+  <Style Selector="Button.navItem.active > StackPanel > TextBlock.glyph">
+    <Setter Property="Foreground" Value="{StaticResource Accent1}" />
+  </Style>
+
+  <!-- segmented type chooser (editor) -->
+  <Style Selector="Button.seg">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="10,7" />
+    <Setter Property="MinHeight" Value="34" />
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+  </Style>
+
+  <Style Selector="Button.seg:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource BtnGhostHover}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.seg.selected">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorderHover}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Button.seg.selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource NavActiveBg}" />
+  </Style>
+
+  <!-- ============ inputs ============ -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{StaticResource InputBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="12,7" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+    <Setter Property="CaretBrush" Value="{StaticResource TextPrimary}" />
+    <Setter Property="SelectionBrush" Value="{StaticResource Accent1}" />
+  </Style>
+
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{StaticResource InputBgHover}" />
+    <Setter Property="BorderBrush" Value="{StaticResource KbdBorder}" />
+  </Style>
+
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorderHover}" />
+    <Setter Property="Background" Value="{StaticResource InputBgHover}" />
+  </Style>
+
+  <Style Selector="TextBox.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="MinHeight" Value="34" />
+  </Style>
+
+  <Style Selector="TextBox.ghost:pointerover /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{StaticResource BtnGhostHover}" />
+  </Style>
+
+  <Style Selector="TextBox.ghost:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{StaticResource BtnGhostHover}" />
+  </Style>
+
+  <Style Selector="ComboBox">
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="MinHeight" Value="36" />
+    <Setter Property="Padding" Value="12,6" />
+    <Setter Property="Background" Value="{StaticResource InputBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="ToggleSwitch">
+    <Setter Property="Foreground" Value="{StaticResource TextSecondary}" />
+    <Setter Property="MinWidth" Value="0" />
+  </Style>
+
+  <Style Selector="CheckBox">
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+  </Style>
+
+  <Style Selector="Slider">
+    <Setter Property="Foreground" Value="{StaticResource Accent1}" />
+  </Style>
+
+  <!-- ============ lists & scrolling ============ -->
+  <Style Selector="ScrollViewer">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="ScrollBar">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Width" Value="10" />
+    <Setter Property="Margin" Value="0,4,2,4" />
+  </Style>
+
+  <Style Selector="ScrollBar:horizontal">
+    <Setter Property="Height" Value="10" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ RepeatButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="ScrollBar /template/ Thumb">
+    <Setter Property="Background" Value="{StaticResource ScrollThumb}" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="MinHeight" Value="42" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="ScrollBar /template/ Thumb:pointerover">
+    <Setter Property="Background" Value="{StaticResource ScrollThumbHover}" />
+  </Style>
+
+  <Style Selector="ItemsControl">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <!-- row hover actions fade in -->
+  <Style Selector="StackPanel.rowActions">
+    <Setter Property="Opacity" Value="0" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Border.row:pointerover StackPanel.rowActions">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+
+  <!-- ============ popups / flyouts / tooltips ============ -->
+  <Style Selector="ToolTip">
+    <Setter Property="Background" Value="{StaticResource CardBgStrong}" />
+    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="10,6" />
+  </Style>
+
+  <Style Selector="FlyoutPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="CornerRadius" Value="18" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ComboBoxItem">
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="10,7" />
+  </Style>
+
+  <!-- transitions for page content -->
+  <Style Selector="TransitioningContentControl">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+</Styles>

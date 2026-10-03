@@ -1,0 +1,288 @@
+<Window x:Class="Keyko.Views.ShortcutEditorWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Keyko.ViewModels"
+        x:DataType="vm:ShortcutEditorViewModel"
+        x:CompileBindings="True"
+        Title="Edit shortcut"
+        Width="790" Height="720" MinWidth="740" MinHeight="640"
+        WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        CanResize="False">
+
+  <Border CornerRadius="18" BorderBrush="{StaticResource CardBorder}" BorderThickness="1"
+          BoxShadow="0 24 70 -18 #88000000" ClipToBounds="True">
+    <Panel>
+      <Border x:Name="BaseWallpaper" Background="{StaticResource BaseGradient}" IsVisible="False" />
+      <ExperimentalAcrylicBorder x:Name="Acrylic" CornerRadius="18" IsHitTestVisible="False">
+        <ExperimentalAcrylicBorder.Material>
+          <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                       TintColor="#17121D"
+                                       TintOpacity="0.72"
+                                       MaterialOpacity="0.55" />
+        </ExperimentalAcrylicBorder.Material>
+      </ExperimentalAcrylicBorder>
+
+      <Grid RowDefinitions="54,*,64">
+
+        <!-- ============ header ============ -->
+        <Panel Grid.Row="0" Margin="16,0,10,0">
+          <Border x:Name="DragZone" Background="Transparent" />
+          <StackPanel Orientation="Horizontal" Spacing="12" IsHitTestVisible="False" VerticalAlignment="Center">
+            <Image Source="avares://Keyko/Assets/logo.png" Width="36" Height="36" VerticalAlignment="Center" />
+            <StackPanel Spacing="1" VerticalAlignment="Center">
+              <TextBlock x:Name="TitleText" Text="New shortcut" Classes="h2" />
+              <TextBlock Text="your cozy little launcher — it works everywhere, even from the tray" Classes="ter" FontSize="10.5" />
+            </StackPanel>
+          </StackPanel>
+          <Button x:Name="CloseBtn" Classes="icon ghost" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Classes="glyph" Text="&#xE711;" />
+          </Button>
+        </Panel>
+
+        <!-- ============ content ============ -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="14,2,10,0">
+          <StackPanel Spacing="12">
+
+            <!-- action card -->
+            <Border Classes="card">
+              <StackPanel Spacing="14">
+                <TextBlock Text="What should it do?" Classes="h2" />
+                <WrapPanel>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeApplication}"
+                          Click="OnTypeClick" Tag="Application" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE71D;" VerticalAlignment="Center" />
+                      <TextBlock Text="Application" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeFolder}"
+                          Click="OnTypeClick" Tag="Folder" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE8B7;" VerticalAlignment="Center" />
+                      <TextBlock Text="Folder" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeUrl}"
+                          Click="OnTypeClick" Tag="Url" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE774;" VerticalAlignment="Center" />
+                      <TextBlock Text="Website" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeCommand}"
+                          Click="OnTypeClick" Tag="Command" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE756;" VerticalAlignment="Center" />
+                      <TextBlock Text="Command" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeSnippet}"
+                          Click="OnTypeClick" Tag="Snippet" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE77B;" VerticalAlignment="Center" />
+                      <TextBlock Text="Text snippet" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeKeySequence}"
+                          Click="OnTypeClick" Tag="KeySequence" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE765;" VerticalAlignment="Center" />
+                      <TextBlock Text="Key sequence" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeSystem}"
+                          Click="OnTypeClick" Tag="System" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE945;" VerticalAlignment="Center" />
+                      <TextBlock Text="System action" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                </WrapPanel>
+
+                <!-- application -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeApplication}">
+                  <Grid ColumnDefinitions="*,Auto" >
+                    <TextBox Watermark="C:\path\to\program.exe" Text="{Binding TargetText}"
+                             TextWrapping="NoWrap" VerticalContentAlignment="Center" />
+                    <Button Grid.Column="1" Margin="8,0,0,0" Click="OnBrowseFile">
+                      <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Classes="glyph g12" Text="&#xED25;" VerticalAlignment="Center" />
+                        <TextBlock Text="Browse…" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Button>
+                  </Grid>
+                  <TextBox Watermark="Arguments (optional)" Text="{Binding Arguments}" />
+                  <TextBox Watermark="Working directory (optional)" Text="{Binding WorkingDirectory}" />
+                </StackPanel>
+
+                <!-- folder -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeFolder}">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Watermark="C:\Users\me\Projects" Text="{Binding TargetText}" />
+                    <Button Grid.Column="1" Margin="8,0,0,0" Click="OnBrowseFolder">
+                      <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Classes="glyph g12" Text="&#xED25;" VerticalAlignment="Center" />
+                        <TextBlock Text="Browse…" VerticalAlignment="Center" />
+                      </StackPanel>
+                    </Button>
+                  </Grid>
+                </StackPanel>
+
+                <!-- url -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeUrl}">
+                  <TextBox Watermark="https://example.com" Text="{Binding TargetText}" />
+                </StackPanel>
+
+                <!-- command -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeCommand}">
+                  <TextBox Watermark="git -C C:\repo pull" Text="{Binding TargetText}" />
+                  <TextBlock Classes="ter" FontSize="11"
+                             Text="Runs hidden via cmd /c. Use it for scripts, CLI tools, batch jobs…" />
+                </StackPanel>
+
+                <!-- snippet -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeSnippet}">
+                  <TextBox Watermark="Paste this text at the cursor…" Text="{Binding SnippetText}"
+                           AcceptsReturn="True" TextWrapping="Wrap" MinHeight="92" />
+                  <TextBlock Classes="ter" FontSize="11"
+                             Text="Copies the text to the clipboard and presses Ctrl+V — types anywhere, in any app." />
+                </StackPanel>
+
+                <!-- key sequence -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeKeySequence}">
+                  <TextBox Watermark="Hello!{Enter}" Text="{Binding SequenceText}"
+                           AcceptsReturn="True" TextWrapping="Wrap" MinHeight="92" />
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Classes="chip" Click="OnInsertSeqToken" Content="{}{Tab}" />
+                    <Button Classes="chip" Click="OnInsertSeqToken" Content="{}{Enter}" />
+                    <Button Classes="chip" Click="OnInsertSeqToken" Content="{}{Ctrl+C}" />
+                    <Button Classes="chip" Click="OnInsertSeqToken" Content="{}{Win+D}" />
+                    <Button Classes="chip" Click="OnInsertSeqToken" Content="{}{Delay 250}" />
+                  </StackPanel>
+                  <TextBlock Classes="ter" FontSize="11" Text="{Binding SequenceHint}" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- system -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeSystem}">
+                  <ComboBox ItemsSource="{Binding SystemActions}" SelectedIndex="{Binding SystemActionIndex}"
+                            HorizontalAlignment="Stretch" MaxDropDownHeight="340">
+                    <ComboBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:ShortcutEditorViewModel+SystemActionOption">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                          <TextBlock Classes="glyph" Text="{Binding Glyph}" Foreground="{StaticResource Accent1}" />
+                          <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                  </ComboBox>
+                  <TextBlock Classes="ter" FontSize="11" Text="{Binding SystemActionHint}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- trigger card -->
+            <Border Classes="card">
+              <StackPanel Spacing="12">
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Text="Trigger" Classes="h2" />
+                  <Button Grid.Column="1" Classes="ghost" Click="OnClearHotkey" FontSize="11.5">
+                    <TextBlock Text="Clear" />
+                  </Button>
+                </Grid>
+                <Border x:Name="Recorder" Classes="row card" Focusable="True" MinHeight="52" Padding="14"
+                        Background="{StaticResource InputBg}">
+                  <Panel>
+                    <TextBlock Text="Click here, then press the key combination…"
+                               Classes="ter" FontSize="12.5"
+                               IsVisible="{Binding !HasHotkeyDisplay}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding HasHotkeyDisplay}"
+                                VerticalAlignment="Center">
+                      <TextBlock Classes="glyph" Text="&#xE765;" Foreground="{StaticResource Accent2}" />
+                      <TextBlock Text="{Binding HotkeyDisplay}" FontSize="16" FontWeight="Normal" />
+                    </StackPanel>
+                  </Panel>
+                </Border>
+                <Border Classes="banner" IsVisible="{Binding HasHotkeyWarning}" Background="{StaticResource DangerBg}"
+                        BorderBrush="{StaticResource Danger}" Padding="10,8">
+                  <TextBlock Text="{Binding HotkeyWarning}" FontSize="12" Foreground="{StaticResource Danger}" />
+                </Border>
+                <TextBlock Classes="ter" FontSize="11"
+                           Text="Press Esc while recording to clear. Combos with Win, Alt, Ctrl, Shift all work — but combos the shell already owns (Win+T = taskbar, Win+G = Game Bar…) never reach Keyko, so pick something else for those." />
+              </StackPanel>
+            </Border>
+
+            <!-- details card -->
+            <Border Classes="card">
+              <StackPanel Spacing="12">
+                <TextBlock Text="Details" Classes="h2" />
+                <TextBox x:Name="NameBox" Watermark="Name" Text="{Binding Name}" FontSize="14" />
+                <TextBox Watermark="Description (optional)" Text="{Binding Description}" />
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBox Watermark="Category (e.g. Work, Web, Media)" Text="{Binding Category}" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Margin="8,0,0,0">
+                    <Button x:Name="EmojiBtn" Classes="icon" Width="38" Height="38" CornerRadius="10"
+                            ToolTip.Tip="Pick an icon emoji">
+                      <TextBlock Text="{Binding EmojiDisplay}"
+                                 FontFamily="Segoe UI Emoji, Segoe UI Symbol" FontSize="16" />
+                      <Button.Flyout>
+                        <Flyout Placement="TopEdgeAlignedRight">
+                          <Border Classes="card" Padding="10">
+                            <ScrollViewer MaxWidth="320" MaxHeight="210" VerticalScrollBarVisibility="Auto">
+                              <ItemsControl ItemsSource="{Binding EmojiChoices}">
+                                <ItemsControl.ItemsPanel>
+                                  <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                  </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                  <DataTemplate x:DataType="x:String">
+                                    <Button Classes="ghost" Width="40" Height="40" CornerRadius="10"
+                                            Click="OnEmojiPick">
+                                      <TextBlock Text="{Binding}" FontFamily="Segoe UI Emoji, Segoe UI Symbol"
+                                                 FontSize="18" />
+                                    </Button>
+                                  </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                              </ItemsControl>
+                            </ScrollViewer>
+                          </Border>
+                        </Flyout>
+                      </Button.Flyout>
+                    </Button>
+                    <Button Classes="ghost" Click="OnAutoEmoji" FontSize="11.5" ToolTip.Tip="Use the default icon for this type">
+                      <TextBlock Text="Auto" />
+                    </Button>
+                  </StackPanel>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Spacing="20">
+                  <CheckBox IsChecked="{Binding Enabled}" Content="Enabled" />
+                  <CheckBox IsChecked="{Binding ShowToast}" Content="Toast on launch" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============ footer ============ -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" Margin="16,10,14,12">
+          <Button x:Name="TestRunBtn" Classes="ghost" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Classes="glyph g12" Text="&#xE768;" VerticalAlignment="Center" />
+              <TextBlock Text="Test run" VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Grid.Column="1" x:Name="CancelBtn" Width="96" Margin="0,0,8,0">
+            <TextBlock Text="Cancel" />
+          </Button>
+          <Button Grid.Column="2" x:Name="SaveBtn" Classes="primary" Width="130">
+            <TextBlock Text="Save shortcut" />
+          </Button>
+        </Grid>
+      </Grid>
+    </Panel>
+  </Border>
+</Window>

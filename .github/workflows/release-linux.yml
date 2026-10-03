@@ -1,0 +1,81 @@
+name: Release (Linux)
+
+# NOTE: Keyko's hotkey engine is Windows-only today. These Linux binaries are
+# experimental: the UI, config, snippets-paste UI and toasts build and launch,
+# but global hotkeys / tray autostart are inactive until the platform layer is ported.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.rid }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [linux-x64, linux-arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Compute version
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      # EnableWindowsTargeting lets the windows-TFM project cross-compile on Linux
+      - name: Publish (self-contained single file)
+        run: |
+          dotnet publish src/Keyko \
+            -c Release -r ${{ matrix.rid }} --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true \
+            -p:EnableWindowsTargeting=true \
+            -p:DebugType=none \
+            -p:Version=${{ steps.ver.outputs.version }} \
+            -o dist/${{ matrix.rid }}
+
+      - name: Package
+        run: |
+          chmod +x dist/${{ matrix.rid }}/Keyko
+          tar -czf "Keyko-${{ steps.ver.outputs.version }}-${{ matrix.rid }}.tar.gz" \
+            -C dist/${{ matrix.rid }} Keyko \
+            -C ../../ README.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyko-${{ matrix.rid }}
+          path: Keyko-*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: Attach to GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          NOTES="$(git tag -l --format='%(contents)' "$TAG")"
+          gh release create "$TAG" --title "Keyko $TAG" ${NOTES:+--notes "$NOTES"} artifacts/*/Keyko-*.tar.gz \
+            || gh release upload "$TAG" artifacts/*/Keyko-*.tar.gz --clobber

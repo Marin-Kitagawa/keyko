@@ -1,0 +1,72 @@
+name: Release (Windows)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build win-x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Compute version
+        id: ver
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish (self-contained single file)
+        shell: bash
+        run: |
+          dotnet publish src/Keyko \
+            -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true \
+            -p:DebugType=none \
+            -p:Version=${{ steps.ver.outputs.version }} \
+            -o dist/win-x64
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist/win-x64/Keyko.exe","README.md" `
+            -DestinationPath "Keyko-${{ steps.ver.outputs.version }}-win-x64.zip" -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyko-win-x64
+          path: Keyko-*-win-x64.zip
+          if-no-files-found: error
+
+  release:
+    name: Attach to GitHub release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          NOTES="$(git tag -l --format='%(contents)' "$TAG")"
+          gh release create "$TAG" --title "Keyko $TAG" ${NOTES:+--notes "$NOTES"} artifacts/*/Keyko-*.zip \
+            || gh release upload "$TAG" artifacts/*/Keyko-*.zip --clobber

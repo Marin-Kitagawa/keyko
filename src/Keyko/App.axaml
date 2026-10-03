@@ -1,0 +1,81 @@
+<Application x:Class="Keyko.App"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:CompileBindings="True"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+
+    <!-- palette: colors are mutated at runtime by Theme.Apply -->
+    <SolidColorBrush x:Key="TextPrimary" Color="#F5F7FC" />
+    <SolidColorBrush x:Key="TextSecondary" Color="#A8AEC2" />
+    <SolidColorBrush x:Key="TextTertiary" Color="#6B7186" />
+
+    <SolidColorBrush x:Key="CardBg" Color="#0AFFFFFF" />
+    <SolidColorBrush x:Key="CardBgHover" Color="#14FFFFFF" />
+    <SolidColorBrush x:Key="CardBgStrong" Color="#B4141826" />
+    <SolidColorBrush x:Key="InputBg" Color="#07FFFFFF" />
+    <SolidColorBrush x:Key="InputBgHover" Color="#0DFFFFFF" />
+    <SolidColorBrush x:Key="CardBorder" Color="#16FFFFFF" />
+    <SolidColorBrush x:Key="CardBorderHover" Color="#598B5CF6" />
+    <SolidColorBrush x:Key="Divider" Color="#12FFFFFF" />
+    <SolidColorBrush x:Key="ChipBg" Color="#0DFFFFFF" />
+    <SolidColorBrush x:Key="ChipBgHover" Color="#1AFFFFFF" />
+    <SolidColorBrush x:Key="KbdBg" Color="#12FFFFFF" />
+    <SolidColorBrush x:Key="KbdBorder" Color="#24FFFFFF" />
+    <SolidColorBrush x:Key="KbdText" Color="#D9DDEA" />
+    <SolidColorBrush x:Key="NavActiveBg" Color="#2E8B5CF6" />
+    <SolidColorBrush x:Key="BtnGhostHover" Color="#0FFFFFFF" />
+    <SolidColorBrush x:Key="BtnHover" Color="#14FFFFFF" />
+    <SolidColorBrush x:Key="ScrollThumb" Color="#28FFFFFF" />
+    <SolidColorBrush x:Key="ScrollThumbHover" Color="#42FFFFFF" />
+    <SolidColorBrush x:Key="Danger" Color="#F87171" />
+    <SolidColorBrush x:Key="Warning" Color="#FBBF24" />
+    <SolidColorBrush x:Key="Success" Color="#34D399" />
+    <SolidColorBrush x:Key="DangerBg" Color="#1FF87171" />
+    <SolidColorBrush x:Key="WarningBg" Color="#1AFBBF24" />
+    <SolidColorBrush x:Key="BannerBorder" Color="#55FBBF24" />
+    <SolidColorBrush x:Key="Base1" Color="#0F121C" />
+    <SolidColorBrush x:Key="Base2" Color="#12182B" />
+    <SolidColorBrush x:Key="Base3" Color="#191233" />
+    <SolidColorBrush x:Key="TileDim" Color="#66000000" />
+
+    <SolidColorBrush x:Key="Accent1" Color="#F472B6" />
+    <SolidColorBrush x:Key="Accent2" Color="#A78BFA" />
+
+    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+      <GradientStop Color="#F472B6" Offset="0" />
+      <GradientStop Color="#A78BFA" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentGradientHover" StartPoint="0%,0%" EndPoint="100%,100%">
+      <GradientStop Color="#F78CC6" Offset="0" />
+      <GradientStop Color="#B79FFB" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BaseGradient" StartPoint="0%,0%" EndPoint="60%,100%">
+      <GradientStop Color="#17121D" Offset="0" />
+      <GradientStop Color="#1F1528" Offset="0.55" />
+      <GradientStop Color="#2A1830" Offset="1" />
+    </LinearGradientBrush>
+
+
+    <FontFamily x:Key="HeadingFont">avares://Keyko/Assets/Fonts/PlayfairDisplay.ttf#Playfair Display</FontFamily>
+    <FontFamily x:Key="SerifItalic">avares://Keyko/Assets/Fonts/PlayfairDisplay-Italic.ttf#Playfair Display</FontFamily>
+    <FontFamily x:Key="KeycapFont">avares://Keyko/Assets/Fonts/FiraCode.ttf#Fira Code</FontFamily>
+
+    <Color x:Key="SystemAccentColor">#F472B6</Color>
+    <Color x:Key="SystemAccentColorDark1">#D0619B</Color>
+    <Color x:Key="SystemAccentColorDark2">#AB5080</Color>
+    <Color x:Key="SystemAccentColorDark3">#863E64</Color>
+    <Color x:Key="SystemAccentColorLight1">#F68AC4</Color>
+    <Color x:Key="SystemAccentColorLight2">#F9A3D2</Color>
+    <Color x:Key="SystemAccentColorLight3">#FBBCE0</Color>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://Keyko/Themes/Glass.axaml" />
+  </Application.Styles>
+
+</Application>
