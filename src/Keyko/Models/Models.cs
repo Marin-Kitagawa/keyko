@@ -123,6 +123,24 @@ public static class SystemActionInfo
         (SystemActionKind.ClearClipboard,     "Clear the clipboard",       "\uE74D"),
         (SystemActionKind.PasteAsPlainText,   "Paste as plain text",       "\uE77F"),
         (SystemActionKind.MicMute,            "Mute / unmute microphone",  "\uE720"),
+
+        // window management
+        (SystemActionKind.SnapLeft,           "Snap window left",          "\uE8A7"),
+        (SystemActionKind.SnapRight,          "Snap window right",         "\uE8A7"),
+        (SystemActionKind.SnapMaximize,       "Maximize / restore window", "\uE922"),
+        (SystemActionKind.AlwaysOnTop,        "Toggle always on top",      "\uE718"),
+        (SystemActionKind.TransparencyUp,     "Window transparency up",    "\uE7B3"),
+        (SystemActionKind.TransparencyDown,   "Window transparency down",  "\uE7B3"),
+        (SystemActionKind.VirtualDesktopNext, "Next virtual desktop",      "\uE7EC"),
+        (SystemActionKind.VirtualDesktopPrevious, "Previous virtual desktop", "\uE892"),
+        (SystemActionKind.MoveWindowLeft,     "Move window to left desktop",  "\uE898"),
+        (SystemActionKind.MoveWindowRight,    "Move window to right desktop", "\uE896"),
+
+        // tools
+        (SystemActionKind.ColorPicker,        "Color picker (copy hex)",   "\uE790"),
+        (SystemActionKind.OcrRegion,          "Copy text from screen (OCR)", "\uE91B"),
+        (SystemActionKind.CaseCycle,          "Cycle case of selection",   "\uE8E9"),
+        (SystemActionKind.PauseKeyko,         "Pause / resume Keyko",      "\uE769"),
     };
 
     public static string DisplayName(string? target) =>
