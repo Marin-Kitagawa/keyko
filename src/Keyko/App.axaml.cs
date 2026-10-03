@@ -137,7 +137,7 @@ public partial class App : Application
         foreach (var item in Vm?.Items.Where(i => i.IsEnabled && i.HasHotkey).Take(6) ?? Enumerable.Empty<ShortcutItemViewModel>())
         {
             var captured = item.Model;
-            var mi = new NativeMenuItem($"{item.Model.TileGlyph}  {item.Name}  ({item.HotkeyDisplay})");
+            var mi = new NativeMenuItem($"{item.Model.Name}  ({item.HotkeyDisplay})");
             mi.Click += (_, _) => _ = Vm?.ExecuteAsync(captured, manual: false);
             menu.Add(mi);
         }

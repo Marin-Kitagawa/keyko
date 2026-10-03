@@ -27,7 +27,7 @@ public partial class MainViewModel : ViewModelBase
         _config = config;
 
         foreach (var m in config.Settings.Shortcuts)
-            AddItem(new ShortcutItemViewModel(m, config.IconsDir));
+            AddItem(new ShortcutItemViewModel(m));
 
         Hotkeys.HotkeyPressed += OnHotkeyPressed;
         Hotkeys.Conflicts += OnConflicts;
@@ -190,7 +190,7 @@ public partial class MainViewModel : ViewModelBase
         {
             action.RunCount++;
             action.LastUsedAt = DateTime.Now;
-            item?.Refresh(false);
+            item?.Refresh();
             UpdateStats();
             _config.Save();
             ToastService.Show(action.Name,
@@ -244,14 +244,14 @@ public partial class MainViewModel : ViewModelBase
         if (isNew)
         {
             _config.Settings.Shortcuts.Add(model);
-            AddItem(new ShortcutItemViewModel(model, _config.IconsDir));
+            AddItem(new ShortcutItemViewModel(model));
         }
         else if (original is not null && item is not null)
         {
             dlg.ViewModel.BuildModel(original);
             if (oldType == Models.ActionType.Application && oldTarget != original.Target)
                 IconCacheService.Invalidate(original.Id, _config.IconsDir);
-            item.Refresh(true);
+            item.Refresh();
         }
 
         _config.Save();
@@ -279,7 +279,7 @@ public partial class MainViewModel : ViewModelBase
             action: ("Undo", () =>
             {
                 _config.Settings.Shortcuts.Insert(Math.Min(index, _config.Settings.Shortcuts.Count), item.Model);
-                var vm = new ShortcutItemViewModel(item.Model, _config.IconsDir);
+                var vm = new ShortcutItemViewModel(item.Model);
                 Items.Insert(Math.Min(index, Items.Count), vm);
                 Hotkeys.Apply(_config.Settings.Shortcuts);
                 RebuildCategories();
@@ -300,7 +300,7 @@ public partial class MainViewModel : ViewModelBase
         clone.RunCount = 0;
         clone.LastUsedAt = null;
         _config.Settings.Shortcuts.Add(clone);
-        AddItem(new ShortcutItemViewModel(clone, _config.IconsDir));
+        AddItem(new ShortcutItemViewModel(clone));
         RebuildCategories();
         ApplyFilter();
         UpdateStats();
@@ -347,7 +347,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 m.Id = Guid.NewGuid().ToString("N");
                 _config.Settings.Shortcuts.Add(m);
-                AddItem(new ShortcutItemViewModel(m, _config.IconsDir));
+                AddItem(new ShortcutItemViewModel(m));
                 n++;
             }
             _config.Save();

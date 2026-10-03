@@ -164,9 +164,7 @@ public partial class ShortcutEditorWindow : Window
 
     private void OnClearHotkey(object? sender, RoutedEventArgs e) => Vm.ClearHotkey();
 
-    // ---------- emoji ----------
-    private void OnAutoEmoji(object? sender, RoutedEventArgs e) => Vm.ClearEmoji();
-
+    // ---------- sequence tokens ----------
     private void OnInsertSeqToken(object? sender, RoutedEventArgs e)
     {
         if (sender is Button { Content: string token })
@@ -174,16 +172,6 @@ public partial class ShortcutEditorWindow : Window
             Vm.SequenceText = (Vm.SequenceText.Length > 0 && !Vm.SequenceText.EndsWith(' ')
                 ? Vm.SequenceText + " "
                 : Vm.SequenceText) + token;
-        }
-    }
-
-    private void OnEmojiPick(object? sender, RoutedEventArgs e)
-    {
-        string? text = sender is Button b ? b.Content as string ?? (b.Content as TextBlock)?.Text : null;
-        if (!string.IsNullOrEmpty(text))
-        {
-            Vm.Emoji = text;
-            EmojiBtn.Flyout?.Hide();
         }
     }
 }

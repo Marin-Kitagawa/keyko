@@ -127,7 +127,7 @@ public partial class SettingsViewModel : ViewModelBase
         _config.Save();
         OnPropertyChanged(nameof(IsDarkTheme));
         OnPropertyChanged(nameof(IsLightTheme));
-        foreach (var item in _main.Items) item.Refresh(false);
+        foreach (var item in _main.Items) item.Refresh();
     }
 
     [RelayCommand]

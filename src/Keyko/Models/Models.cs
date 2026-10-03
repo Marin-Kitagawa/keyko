@@ -159,6 +159,23 @@ public sealed class ShortcutAction
     public DateTime? LastUsedAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+    // expansion
+    public string? Abbreviation { get; set; }
+
+    // webhook
+    public string? HttpMethod { get; set; } = "POST";
+    public string? Body { get; set; }
+
+    // scheduling
+    public ScheduleMode Schedule { get; set; } = ScheduleMode.None;
+    public int ScheduleIntervalMinutes { get; set; } = 30;
+    public string? ScheduleDailyTime { get; set; } = "09:00";
+    public DateTime? LastFiredAt { get; set; }
+
+    // per-app scoping (semicolon-separated exe names, without .exe)
+    public string? OnlyInApps { get; set; }
+    public string? NotInApps { get; set; }
+
     [JsonIgnore] public HotkeyGesture? Gesture => HotkeyGesture.TryParse(Hotkey, out var g) ? g : null;
 
     [JsonIgnore] public bool HasHotkey => Gesture is not null;
@@ -171,27 +188,32 @@ public sealed class ShortcutAction
         ActionType.Snippet => "Paste: " + (Target.Length > 44 ? Target[..44] + "…" : Target),
         ActionType.KeySequence => "Keys: " + (Target.Length > 44 ? Target[..44] + "…" : Target),
         ActionType.System => SystemActionInfo.DisplayName(Target),
+        ActionType.Webhook => "Webhook: " + (Target.Length > 40 ? Target[..40] + "…" : Target),
+        ActionType.Script => "Script: " + (Target.Length > 40 ? Target[..40] + "…" : Target),
+        ActionType.Expansion => "Expand: " + (Abbreviation ?? "") + " → " + (Target.Length > 30 ? Target[..30] + "…" : Target),
         _ => Target,
     };
 
-    public static string TypeEmoji(ActionType t) => t switch
+    public static string TypeGlyph(ActionType t) => t switch
     {
-        ActionType.Application => "🚀",
-        ActionType.Folder => "📁",
-        ActionType.Url => "🌐",
-        ActionType.Command => "🖥️",
-        ActionType.Snippet => "📋",
-        ActionType.KeySequence => "⌨️",
-        ActionType.System => "⚡",
-        _ => "⭐",
+        ActionType.Application => "\uE71D",
+        ActionType.Folder => "\uE8B7",
+        ActionType.Url => "\uE774",
+        ActionType.Command => "\uE756",
+        ActionType.Snippet => "\uE77F",
+        ActionType.KeySequence => "\uE765",
+        ActionType.System => "\uE945",
+        ActionType.Webhook => "\uE8EA",
+        ActionType.Script => "\uE943",
+        ActionType.Expansion => "\uE77B",
+        _ => "\uE7C3",
     };
-
-    [JsonIgnore] public string TileGlyph => string.IsNullOrEmpty(Emoji) ? TypeEmoji(Type) : Emoji!;
 }
 
 public sealed class AppSettings
 {
     public string Theme { get; set; } = "Dark"; // Dark | Light
+    public bool FollowSystemTheme { get; set; }
     public string Accent1 { get; set; } = "#F472B6";
     public string Accent2 { get; set; } = "#A78BFA";
     public double GlassTintOpacity { get; set; } = 0.72;
@@ -199,5 +221,12 @@ public sealed class AppSettings
     public bool RunAsAdmin { get; set; }
     public bool StartMinimized { get; set; } = true;
     public bool ShowToasts { get; set; } = true;
+    public bool SoundOnLaunch { get; set; }
+    public string? SearchHotkey { get; set; } = "Ctrl+Alt+Space";
+    public string? PauseHotkey { get; set; }
+    public string? ProfileCycleHotkey { get; set; }
+    public string ActiveProfile { get; set; } = "Default";
+    public List<ProfileSet> Profiles { get; set; } = new();
+    public List<string> GlobalAppExclusions { get; set; } = new();
     public List<ShortcutAction> Shortcuts { get; set; } = new();
 }
