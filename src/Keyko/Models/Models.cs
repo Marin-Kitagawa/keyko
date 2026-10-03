@@ -248,3 +248,29 @@ public sealed class AppSettings
     public List<string> GlobalAppExclusions { get; set; } = new();
     public List<ShortcutAction> Shortcuts { get; set; } = new();
 }
+
+public static class ShortcutActionExtensions
+{
+    public static ShortcutAction Clone(this ShortcutAction a) => new()
+    {
+        Id = Guid.NewGuid().ToString("N"),
+        Name = a.Name,
+        Description = a.Description,
+        Category = a.Category,
+        Type = a.Type,
+        Target = a.Target,
+        Arguments = a.Arguments,
+        WorkingDirectory = a.WorkingDirectory,
+        Hotkey = a.Hotkey,
+        Enabled = a.Enabled,
+        ShowToast = a.ShowToast,
+        Abbreviation = a.Abbreviation,
+        HttpMethod = a.HttpMethod,
+        Body = a.Body,
+        Schedule = a.Schedule,
+        ScheduleIntervalMinutes = a.ScheduleIntervalMinutes,
+        ScheduleDailyTime = a.ScheduleDailyTime,
+        OnlyInApps = a.OnlyInApps,
+        NotInApps = a.NotInApps,
+    };
+}

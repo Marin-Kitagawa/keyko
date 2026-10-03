@@ -285,4 +285,14 @@ internal static class Native
         }
         catch { /* pre-Win11: silently skip */ }
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct KBDLLHOOKSTRUCT
+    {
+        public uint vkCode;
+        public uint scanCode;
+        public uint flags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
 }
