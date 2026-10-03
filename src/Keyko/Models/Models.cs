@@ -13,7 +13,23 @@ public enum ActionType
     Command,
     Snippet,
     KeySequence,
-    System
+    System,
+    Webhook,
+    Script,
+    Expansion
+}
+
+public enum ScheduleMode
+{
+    None,
+    Interval,
+    Daily
+}
+
+public sealed class ProfileSet
+{
+    public string Name { get; set; } = "Default";
+    public List<ShortcutAction> Shortcuts { get; set; } = new();
 }
 
 public enum SystemActionKind
@@ -40,6 +56,15 @@ public enum SystemActionKind
 
     // clipboard & input
     ClearClipboard, PasteAsPlainText, MicMute,
+
+    // window management
+    SnapLeft, SnapRight, SnapMaximize, AlwaysOnTop,
+    TransparencyUp, TransparencyDown,
+    VirtualDesktopNext, VirtualDesktopPrevious,
+    MoveWindowLeft, MoveWindowRight,
+
+    // tools
+    ColorPicker, OcrRegion, CaseCycle, PauseKeyko,
 }
 
 public static class SystemActionInfo
