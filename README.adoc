@@ -1,4 +1,6 @@
-= image:docs/animated_logo.gif[Keyko animated logo,width=140] Keyko ♡
+image::docs/animated_logo.gif[Keyko animated logo,width=140, align="center"]  
+
+= Keyko ♡
 
 A cozy, pastel, *global hotkey launcher* for Windows — press a key combination anywhere and make something happen: launch an app, open a folder, paste a snippet, run a key sequence, mute your mic, lock your PC…
 
