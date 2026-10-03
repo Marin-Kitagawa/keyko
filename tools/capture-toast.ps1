@@ -28,7 +28,7 @@ $cb = [TCap+EnumProc]{
     $r = New-Object TCap+R
     [TCap]::GetWindowRect($h, [ref]$r) | Out-Null
     $w = $r.Rt - $r.L
-    if ([string]::IsNullOrEmpty($sb.ToString())) { $script:cands += $h }
+    if ($w -gt 300 -and $w -lt 900) { $script:cands += $h }
   }
   return $true
 }

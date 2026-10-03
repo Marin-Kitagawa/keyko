@@ -86,20 +86,10 @@
                       DoubleTapped="OnRowDoubleTapped">
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
 
-                  <!-- icon tile -->
-                  <Border Width="46" Height="46" CornerRadius="12" Background="{Binding TileBrush}"
-                          VerticalAlignment="Center" BoxShadow="0 4 12 -4 #66000000" ClipToBounds="True">
-                    <Panel>
-                      <Image Source="{Binding IconImage}" IsVisible="{Binding HasIcon}"
-                             Width="28" Height="28" Stretch="Uniform" />
-                      <TextBlock Text="{Binding TileGlyph}" FontSize="19" IsVisible="{Binding TileIsEmoji}"
-                                 FontFamily="Segoe UI Emoji, Segoe UI Symbol"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
-                      <TextBlock Classes="glyph" Text="{Binding TileFluentGlyph}" FontSize="17"
-                                 Foreground="White" IsVisible="{Binding TileUseFluentGlyph}"
-                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Panel>
-                  </Border>
+                  <!-- icon: clean Fluent glyph, no tile -->
+                  <TextBlock Classes="glyph" Text="{Binding TileFluentGlyph}" FontSize="20"
+                             Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center"
+                             HorizontalAlignment="Center" Width="34" TextAlignment="Center" />
 
                   <!-- name + description -->
                   <StackPanel Grid.Column="1" Margin="14,0,10,0" VerticalAlignment="Center" Spacing="4">
@@ -160,11 +150,8 @@
       <!-- empty state -->
       <StackPanel IsVisible="{Binding !HasVisibleItems}" HorizontalAlignment="Center" VerticalAlignment="Center"
                   Spacing="10" Opacity="0.85">
-        <Border Width="64" Height="64" CornerRadius="18" Background="{StaticResource ChipBg}"
-                BorderBrush="{StaticResource CardBorder}" BorderThickness="1" HorizontalAlignment="Center">
-          <TextBlock Classes="glyph g20" Text="&#xE765;" FontSize="26" HorizontalAlignment="Center"
-                     VerticalAlignment="Center" Foreground="{StaticResource TextTertiary}" />
-        </Border>
+        <TextBlock Classes="glyph" Text="&#xE765;" FontSize="34" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" Foreground="{StaticResource TextTertiary}" />
         <TextBlock Text="No shortcuts here yet ♡" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="26" HorizontalAlignment="Center" />
         <TextBlock Text="Press New Shortcut to make one — or clear the filters ♡" Classes="ter"
                    FontSize="12" HorizontalAlignment="Center" />

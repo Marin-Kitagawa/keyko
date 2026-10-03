@@ -52,7 +52,7 @@ public partial class App : Application
                     armed > 0
                         ? "They work system-wide — even from the tray."
                         : "Check the conflict banner in Keyko for combos other apps already own.",
-                    emoji: armed > 0 ? "🌸" : "⚠️",
+                    glyph: armed > 0 ? "\uE73E" : "\uE783",
                     settings: null);
 
                 Vm.RegisterHotkeys();

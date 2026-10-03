@@ -35,7 +35,7 @@ Clavier+ never had.
 - **Usage stats**: launch counters, "last used", totals in the sidebar
 - **JSON profiles**: export/import your setup, portable between machines
  - **Cozy looks**: acrylic glass, dark & light themes, 6 pastel accents (Blossom, Rose, Peach, Lavender, Mint, Sky),
-  adjustable blur, rounded everything, Lavishly Yours script headings, Playfair Display regular/italic body, Fira Code keycaps, logo art — the little pink keybird on a keycap ♡ — pastel icon tiles
+  adjustable blur, rounded everything, Lavishly Yours script headings, Playfair Display regular/italic body, Fira Code keycaps, clean Fluent icons (no icon tiles), logo art — the little pink keybird on a keycap ♡ — pastel icon tiles
 - Non-focus-stealing **toast notifications** when a hotkey fires (and for errors/undo)
 
 | Editor | Light theme |

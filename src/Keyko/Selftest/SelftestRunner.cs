@@ -21,7 +21,7 @@ namespace Keyko.Selftest;
 /// Usage: Keyko --selftest main.png editor.png settings.png
 ///
 /// NOTE: RunAsync runs on the UI thread (resumed there by the dispatcher sync
-/// context), so window captures are plain synchronous calls — do NOT await
+/// context), so window captures are plain synchronous calls â do NOT await
 /// InvokeAsync here: that continuation can deadlock behind a modal dialog loop.
 /// </summary>
 public static class SelftestRunner
@@ -46,7 +46,7 @@ public static class SelftestRunner
             Shot(main, outMain);
 
             // show the toast early so an external capture can grab it pre-dialog
-            ToastService.ShowNow("♡ 5 hotkeys armed", "They work system-wide — even from the tray.", "🌸");
+            ToastService.ShowNow("â¡ 5 hotkeys armed", "They work system-wide — even from the tray.", "");
 
             vm.SetPage(NavPage.Settings);
             await Task.Delay(500);

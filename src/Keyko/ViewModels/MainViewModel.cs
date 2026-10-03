@@ -195,12 +195,12 @@ public partial class MainViewModel : ViewModelBase
             _config.Save();
             ToastService.Show(action.Name,
                 manual ? "Launched manually" : action.Gesture?.Display,
-                emoji: action.TileGlyph,
+                glyph: "E768",
                 settings: _config.Settings);
         }
         else
         {
-            ToastService.Show("Couldn't launch " + action.Name, error, emoji: "⚠️", settings: null);
+            ToastService.Show("Couldn't launch " + action.Name, error, glyph: "E783", settings: null);
         }
     }
 
@@ -274,7 +274,7 @@ public partial class MainViewModel : ViewModelBase
         UpdateStats();
         _config.Save();
 
-        ToastService.Show("Shortcut deleted", item.Name, emoji: "🗑️",
+        ToastService.Show("Shortcut deleted", item.Name, glyph: "E74D",
             settings: _config.Settings,
             action: ("Undo", () =>
             {
