@@ -64,6 +64,7 @@ internal static class Native
     public static extern uint GetCurrentThreadId();
 
     public const uint WM_APP_APPLY = 0x8001; // WM_APP range: apply the hotkey set on the hotkey thread
+    public const uint WM_APP_APPLY_SYSTEM = 0x8002;
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSG
@@ -296,3 +297,5 @@ internal static class Native
         public IntPtr dwExtraInfo;
     }
 }
+
+    // populated inside the Native class below

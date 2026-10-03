@@ -4,6 +4,7 @@ using System.Threading;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Keyko.Interop;
+using System.Linq;
 using Keyko.Models;
 
 namespace Keyko.Services;
@@ -22,7 +23,10 @@ public sealed class HotkeyService : IDisposable
     private readonly ManualResetEventSlim _ready = new(false);
     private readonly object _gate = new();
     private List<ShortcutAction>? _pending;
+    private System.Collections.Generic.List<(string Id, string Hotkey)>? _pendingSystem;
     private readonly Dictionary<int, ShortcutAction> _map = new();
+    private readonly Dictionary<int, string> _systemIds = new();
+
     private int _nextId = 1;
     private bool _disposed;
 
@@ -56,12 +60,29 @@ public sealed class HotkeyService : IDisposable
             {
                 ApplyOnThisThread();
             }
+            else if (msg.message == Native.WM_APP_APPLY_SYSTEM)
+            {
+                ApplySystemOnThisThread();
+            }
             else if (msg.message == Native.WM_HOTKEY)
             {
                 ShortcutAction? action;
-                lock (_gate) { _map.TryGetValue((int)msg.wParam, out action); }
-                if (action != null)
+                string? systemId = null;
+                lock (_gate)
+                {
+                    if (!_map.TryGetValue((int)msg.wParam, out action))
+                        _systemIds.TryGetValue((int)msg.wParam, out systemId);
+                }
+                if (systemId is not null)
+                {
+                    var id = systemId;
+                    Dispatcher.UIThread.Post(() => SystemHotkey?.Invoke(id));
+                }
+                else if (action != null && !KeykoState.Paused &&
+                         KeykoDispatch.AllowsOnForeground(action))
+                {
                     Dispatcher.UIThread.Post(() => HotkeyPressed?.Invoke(action));
+                }
             }
         }
     }
@@ -123,6 +144,70 @@ public sealed class HotkeyService : IDisposable
             lock (_gate) { _pending = new List<ShortcutAction>(actions); }
         }
     }
+
+    /// <summary>
+    /// Registers "system hotkeys" — reserved combos that trigger app-level behaviors
+    /// (search overlay, pause toggle, profile cycling) rather than user shortcuts.
+    /// Results flow through SystemHotkey(id) on the UI thread.
+    /// </summary>
+    public void ApplySystem(IReadOnlyList<(string Id, string Hotkey)> hotkeys)
+    {
+        if (_disposed || !OperatingSystem.IsWindows()) return;
+        if (!_ready.IsSet) _ready.Wait(TimeSpan.FromSeconds(3));
+        if (_threadId == 0) return;
+
+        lock (_gate) { _pendingSystem = hotkeys.ToList(); }
+        Native.PostThreadMessageW(_threadId, Native.WM_APP_APPLY_SYSTEM, IntPtr.Zero, IntPtr.Zero);
+    }
+
+    private void ApplySystemOnThisThread()
+    {
+        List<(string Id, string Hotkey)> hotkeys;
+        lock (_gate)
+        {
+            if (_pendingSystem is null) return;
+            hotkeys = _pendingSystem;
+            _pendingSystem = null;
+        }
+
+        var failures = new List<(string Id, string Hotkey)>();
+        lock (_gate)
+        {
+            foreach (var id in _systemIds.Keys) Native.UnregisterHotKey(IntPtr.Zero, id);
+            _systemIds.Clear();
+            _nextId = Math.Max(_nextId, 9000); // system ids live at 9000+
+
+            foreach (var (id, hk) in hotkeys)
+            {
+                if (string.IsNullOrEmpty(hk)) continue;
+                if (!HotkeyGesture.TryParse(hk, out var g) || g.IsEmpty) continue;
+                var vk = KeyToVk(g.Key);
+                if (vk == 0) continue;
+                if (Native.RegisterHotKey(IntPtr.Zero, _nextId, g.ToWin32Modifiers(), vk))
+                {
+                    _systemIds[_nextId++] = id;
+                }
+                else
+                {
+                    failures.Add((id, hk));
+                }
+            }
+        }
+        if (failures.Count > 0)
+        {
+            var snapshot = failures;
+            Dispatcher.UIThread.Post(() =>
+            {
+                foreach (var f in snapshot) SystemHotkeyFailed?.Invoke(f.Id, f.Hotkey);
+            });
+        }
+    }
+
+    /// <summary>Fired on the UI thread when a reserved system hotkey is pressed.</summary>
+    public event Action<string>? SystemHotkey;
+
+    /// <summary>Fired on the UI thread when a reserved system hotkey could not be armed.</summary>
+    public event Action<string, string>? SystemHotkeyFailed;
 
     public void Dispose()
     {
