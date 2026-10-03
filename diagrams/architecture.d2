@@ -1,0 +1,54 @@
+direction: down
+
+keyko: Keyko (net10.0-windows, Avalonia 11) {
+
+  ui: Presentation (Avalonia UI) {
+    main-window: MainWindow
+    shortcuts-page: ShortcutsPage
+    settings-page: SettingsPage
+    about-page: AboutPage
+    editor-dialog: ShortcutEditorWindow
+    toasts: ToastService overlay
+    tray: TrayIcon menu
+  }
+
+  viewmodels: ViewModels (CommunityToolkit.Mvvm) {
+    main-vm: MainViewModel
+    item-vm: ShortcutItemViewModel
+    editor-vm: ShortcutEditorViewModel
+    settings-vm: SettingsViewModel
+  }
+
+  services: Services {
+    config: ConfigService (JSON profile)
+    hotkeys: HotkeyService (thread-level engine)
+    runner: ActionRunner
+    keyseq: KeySequenceEngine (SendInput)
+    icons: IconCacheService
+    autostart: AutostartService
+    toast-svc: ToastService
+    theme: UiTheme + GlassService
+    elevation: Elevation
+  }
+
+  interop: Interop (Native P/Invoke) {
+    reg: RegisterHotKey / WM_HOTKEY
+    sendinput: SendInput / keybd_event
+    power: LockWorkStation / SetSuspendState
+    clipboard: OpenClipboard / EmptyClipboard
+    dwm: DWM + shell
+  }
+
+  storage: Local machine {
+    profile: "%APPDATA%\Keyko\config.json"
+    icons-dir: "Icons\*.png cache"
+    registry: "HKCU Run key / scheduled task"
+  }
+}
+
+ui -> viewmodels: commands + bindings
+viewmodels -> services: orchestration
+services -> interop: P/Invoke
+config <-> storage: load / save
+icons <-> storage: extract + cache
+autostart <-> storage: Run key or task

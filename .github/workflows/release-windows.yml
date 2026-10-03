@@ -39,7 +39,7 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          Compress-Archive -Path "dist/win-x64/Keyko.exe","README.md" `
+          Compress-Archive -Path "dist/win-x64/Keyko.exe","README.adoc" `
             -DestinationPath "Keyko-${{ steps.ver.outputs.version }}-win-x64.zip" -Force
 
       - uses: actions/upload-artifact@v4

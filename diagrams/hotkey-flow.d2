@@ -1,0 +1,38 @@
+direction: right
+user: User {shape: person}
+keyboard: Physical keyboard
+hotkey-thread: Hotkey pump thread {
+  pump: GetMessageW loop (background, always alive)
+}
+registration: Arming (at launch / after edits) {
+  a1: Apply(actions)
+  a2: marshal WM_APP command onto pump thread
+  a3: RegisterHotKey(NULL, vk, mods) per enabled shortcut
+  failures: taken combos -> Conflicts banner
+  a1 -> a2 -> a3
+  a2 -> failures
+}
+trigger: Press (e.g. Ctrl+Alt+K) {
+  t1: OS posts WM_HOTKEY to pump queue
+  t2: lookup shortcut by id
+  t3: dispatch to UI thread
+  t1 -> t2 -> t3
+}
+runner: ActionRunner {
+  app: Application / Folder / Url
+  cmd: Command
+  snippet: Snippet
+  keyseq: Key sequence
+  system: System action (38 kinds)
+}
+feedback: Feedback {
+  toast: Toast (4.2s)
+  stats: Run count + last used
+}
+shortcut-db: config.json {shape: cylinder}
+user -> keyboard: press combo
+keyboard -> trigger: WM_HOTKEY
+registration -> hotkey-thread: arms ids
+trigger -> runner: shortcut type
+runner -> feedback: launched OK / error
+runner -> shortcut-db: stats + last used

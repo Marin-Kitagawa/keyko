@@ -1,0 +1,34 @@
+direction: right
+dev: Developer (GPG-signed commit) {shape: person}
+repo: github.com/Marin-Kitagawa/keyko {
+  main: main branch
+  tag: signed tag v*
+}
+ci: GitHub Actions {
+  win: Release (Windows) {
+    publish: dotnet publish win-x64 single-file
+    zip: zip artifact
+  }
+  linux: Release (Linux) {
+    lx64: linux-x64 tar.gz
+    larm: linux-arm64 tar.gz
+  }
+  mac: Release (macOS) {
+    osxarm: osx-arm64 tar.gz
+    osxx64: osx-x64 tar.gz
+  }
+}
+release: GitHub Release v* {
+  notes: notes from tag annotation
+  assets: 5 artifacts
+}
+
+dev -> repo.main: push (signed)
+repo.main -> repo.tag: tag v*
+repo.tag -> ci.win: triggers
+repo.tag -> ci.linux: triggers
+repo.tag -> ci.mac: triggers
+ci.win -> release.assets: Keyko-1.3.0-win-x64.zip
+ci.linux -> release.assets: linux tar.gz
+ci.mac -> release.assets: macOS tar.gz
+release.notes: curated body

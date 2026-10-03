@@ -34,10 +34,11 @@ public static class SelftestRunner
         _ = RunAsync(main,
             paths.Length > 0 ? paths[0] : "selftest-main.png",
             paths.Length > 1 ? paths[1] : "selftest-editor.png",
-            paths.Length > 2 ? paths[2] : "selftest-settings.png");
+            paths.Length > 2 ? paths[2] : "selftest-settings.png",
+            paths.Length > 3 ? paths[3] : "selftest-about.png");
     }
 
-    private static async Task RunAsync(MainWindow main, string outMain, string outEditor, string outSettings)
+    private static async Task RunAsync(MainWindow main, string outMain, string outEditor, string outSettings, string outAbout)
     {
         try
         {
@@ -46,11 +47,15 @@ public static class SelftestRunner
             Shot(main, outMain);
 
             // show the toast early so an external capture can grab it pre-dialog
-            ToastService.ShowNow("â¡ 5 hotkeys armed", "They work system-wide — even from the tray.", "");
+            ToastService.ShowNow("\u2661 5 hotkeys armed", "They work system-wide - even from the tray.", "\uE73E");
 
             vm.SetPage(NavPage.Settings);
             await Task.Delay(500);
             Shot(main, outSettings);
+
+            vm.SetPage(NavPage.About);
+            await Task.Delay(500);
+            Shot(main, outAbout);
 
             vm.SetPage(NavPage.Shortcuts);
             await Task.Delay(300);

@@ -1,0 +1,68 @@
+system: System actions (38) {
+  media: Media and volume {
+    mute: Mute/unmute
+    vol-up: Volume up
+    vol-down: Volume down
+    play: Play/pause
+    next: Next track
+    prev: Previous track
+    stop: Stop
+  }
+  panels: Panels (Win combos) {
+    clipboard: Clipboard history
+    quick: Quick settings
+    notif: Notification center
+    widgets: Widgets board
+    search: Search panel
+    taskview: Task View
+    cast: Cast panel
+    project: Project panel
+    start: Start menu
+    gamebar: Game Bar
+  }
+  display: Display {
+    monitor: Monitor off
+    snip: Snipping overlay
+    emoji: Emoji panel
+  }
+  power: Power and session {
+    lock: Lock
+    sleep: Sleep
+    hibernate: Hibernate
+    restart: Restart
+    shutdown: Shut down
+  }
+  windows: Windows and apps {
+    taskmgr: Task Manager
+    desktop: Show desktop
+    minimize: Minimize all
+    run: Run dialog
+    explorer: File Explorer
+    settings: Windows Settings
+  }
+  places: Shell places {
+    downloads: Downloads
+    documents: Documents
+    pictures: Pictures
+    desktop-folder: Desktop folder
+    recycle: Recycle Bin
+  }
+  clipboard: Clipboard and input {
+    clear: Clear clipboard
+    paste-plain: Paste as plain text
+    mic: Mic mute
+  }
+}
+keyko: Keyko engine {
+  vk: keybd_event taps
+  si: SendInput combos
+  api: Win32 calls
+  shell: shell: folder launch
+  proc: Process.Start
+}
+system -> keyko: each kind maps to
+keyko.vk -> system.media
+keyko.si -> system.panels
+keyko.api -> system.power
+keyko.shell -> system.places
+keyko.proc -> system.windows

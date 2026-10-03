@@ -46,16 +46,35 @@ public static class ActionRunner
                 case ActionType.Snippet:
                     if (clipboardHost.Clipboard is null) return (false, "Clipboard unavailable");
                     await clipboardHost.Clipboard.SetTextAsync(a.Target);
-                    await Task.Delay(160);
+
+                    // verify the write actually landed (clipboard managers can race it away)
+                    var readBack = await clipboardHost.Clipboard.GetTextAsync();
+                    if (!string.Equals(readBack, a.Target, StringComparison.Ordinal))
+                    {
+                        await Task.Delay(120);
+                        await clipboardHost.Clipboard.SetTextAsync(a.Target);
+                        readBack = await clipboardHost.Clipboard.GetTextAsync();
+                        if (!string.Equals(readBack, a.Target, StringComparison.Ordinal))
+                            return (false, "Another app is holding the clipboard");
+                    }
+
+                    // the hotkey's physical modifiers may still be down — pasting now
+                    // would send Ctrl+Alt+V instead of Ctrl+V. Wait for release off-thread.
+                    await Task.Run(() => WaitForModifierRelease());
                     SendPaste();
                     break;
 
                 case ActionType.KeySequence:
-                    await Task.Run(() => KeySequenceEngine.Send(a.Target));
+                    await Task.Run(() =>
+                    {
+                        WaitForModifierRelease();
+                        KeySequenceEngine.Send(a.Target);
+                    });
                     break;
 
                 case ActionType.System:
-                    DoSystemAction(Enum.TryParse<SystemActionKind>(a.Target, out var k) ? k : SystemActionKind.VolumeMute);
+                    await Task.Run(() =>
+                        DoSystemAction(Enum.TryParse<SystemActionKind>(a.Target, out var k) ? k : SystemActionKind.VolumeMute));
                     break;
             }
             return (true, null);
@@ -63,6 +82,28 @@ public static class ActionRunner
         catch (Exception ex)
         {
             return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// WM_HOTKEY fires while the user is still holding the hotkey's physical modifiers.
+    /// Any synthesized input sent before they're released arrives modified
+    /// (Ctrl+Alt+V instead of Ctrl+V, Ctrl+Alt+Win+K instead of Win+K, …).
+    /// Polls GetAsyncKeyState until all modifiers are up (bounded).
+    /// </summary>
+    private static void WaitForModifierRelease(int timeoutMs = 1600)
+    {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        while (sw.ElapsedMilliseconds < timeoutMs)
+        {
+            bool down(int vk) => (Native.GetAsyncKeyState(vk) & 0x8000) != 0;
+            if (!down(Native.VK_CONTROL) && !down(Native.VK_MENU) && !down(Native.VK_SHIFT)
+                && !down(Native.VK_LWIN) && !down(Native.VK_RWIN))
+            {
+                System.Threading.Thread.Sleep(50); // let the last keyup finish propagating
+                return;
+            }
+            System.Threading.Thread.Sleep(25);
         }
     }
 
@@ -85,6 +126,10 @@ public static class ActionRunner
     private static void SendWinCombo(ushort vk, bool shift = false, bool ctrl = false, bool alt = false)
     {
         var inputs = new List<Native.INPUT>();
+
+        // panel combos (Win+V, Win+Shift+S, …) fail the same way snippets do if the
+        // hotkey's physical Win key is still held — wait for it to come up
+        WaitForModifierRelease();
 
         void Key(ushort key, bool up)
         {

@@ -142,6 +142,9 @@ internal static class Native
     [DllImport("user32.dll")]
     public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
+    [DllImport("user32.dll")]
+    public static extern short GetAsyncKeyState(int vKey);
+
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     public static extern short VkKeyScanW(char ch);
 
@@ -153,6 +156,7 @@ internal static class Native
     public const ushort VK_SHIFT = 0x10;
     public const ushort VK_V = 0x56;
     public const ushort VK_LWIN = 0x5B;
+    public const ushort VK_RWIN = 0x5C;
     public const ushort VK_VOLUME_MUTE = 0xAD;
     public const ushort VK_VOLUME_DOWN = 0xAE;
     public const ushort VK_VOLUME_UP = 0xAF;

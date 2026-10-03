@@ -50,7 +50,7 @@ jobs:
           chmod +x dist/${{ matrix.rid }}/Keyko
           tar -czf "Keyko-${{ steps.ver.outputs.version }}-${{ matrix.rid }}.tar.gz" \
             -C dist/${{ matrix.rid }} Keyko \
-            -C ../../ README.md
+            -C ../../ README.adoc
 
       - uses: actions/upload-artifact@v4
         with:
