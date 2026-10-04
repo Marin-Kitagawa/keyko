@@ -234,6 +234,150 @@ public static class ActionRunner
                 break;
             case SystemActionKind.PasteAsPlainText: SendWinCombo(0x56, ctrl: true); break; // Win+Ctrl+V (Win11 paste as plain text)
             case SystemActionKind.MicMute: SendWinCombo(0x4B, alt: true); break; // Win+Alt+K
+
+            // window management
+            case SystemActionKind.SnapLeft: SnapFocused(left: true); break;
+            case SystemActionKind.SnapRight: SnapFocused(left: false); break;
+            case SystemActionKind.SnapMaximize: ToggleMaximizeFocused(); break;
+            case SystemActionKind.AlwaysOnTop: ToggleTopmostFocused(); break;
+            case SystemActionKind.TransparencyUp: AdjustTransparencyFocused(-32); break;
+            case SystemActionKind.TransparencyDown: AdjustTransparencyFocused(+32); break;
+            case SystemActionKind.VirtualDesktopNext: SendWinCombo(0x27, ctrl: true); break;      // Ctrl+Win+Right
+            case SystemActionKind.VirtualDesktopPrevious: SendWinCombo(0x25, ctrl: true); break; // Ctrl+Win+Left
+            case SystemActionKind.MoveWindowLeft: SendWinCombo(0x25, shift: true); break;        // Win+Shift+Left
+            case SystemActionKind.MoveWindowRight: SendWinCombo(0x27, shift: true); break;       // Win+Shift+Right
+
+            // tools
+            case SystemActionKind.ColorPicker: Overlays.ShowColorPicker(); break;
+            case SystemActionKind.OcrRegion: Overlays.ShowOcrRegion(); break;
+            case SystemActionKind.CaseCycle: CycleSelectionCase(); break;
+            case SystemActionKind.PauseKeyko: KeykoState.TogglePause(); break;
         }
+    }
+
+    private static void SnapFocused(bool left)
+    {
+        try
+        {
+            var hwnd = Native.GetForegroundWindow();
+            if (hwnd == IntPtr.Zero) return;
+            var mon = Native.MonitorFromWindow(hwnd, Native.MONITOR_DEFAULTTONEAREST);
+            var mi = new Native.MONITORINFO { cbSize = Marshal.SizeOf<Native.MONITORINFO>() };
+            if (!Native.GetMonitorInfoW(mon, ref mi)) return;
+            var wa = mi.rcWork;
+            var w = (wa.Right - wa.Left) / 2;
+            Native.SetWindowPos(hwnd, IntPtr.Zero,
+                left ? wa.Left : wa.Left + w, wa.Top, w, wa.Bottom - wa.Top, 0x0004 /*NOZORDER*/ | 0x0010);
+        }
+        catch { }
+    }
+
+    private static void ToggleMaximizeFocused()
+    {
+        try
+        {
+            var hwnd = Native.GetForegroundWindow();
+            if (hwnd == IntPtr.Zero) return;
+            var placement = new WINDOWPLACEMENT { length = Marshal.SizeOf<WINDOWPLACEMENT>() };
+            if (!GetWindowPlacement(hwnd, ref placement)) return;
+            ShowWindow(hwnd, placement.showCmd == SW_SHOWMAXIMIZED ? SW_RESTORE : SW_SHOWMAXIMIZED);
+        }
+        catch { }
+    }
+
+    private static void ToggleTopmostFocused()
+    {
+        try
+        {
+            var hwnd = Native.GetForegroundWindow();
+            if (hwnd == IntPtr.Zero) return;
+            var ex = Native.GetWindowLongPtr(hwnd, (int)Native.GWL_EXSTYLE).ToInt64();
+            bool topmost = (ex & 0x8) != 0; // WS_EX_TOPMOST
+            Native.SetWindowPos(hwnd, topmost ? Native.HWND_NOTOPMOST : Native.HWND_TOPMOST,
+                0, 0, 0, 0, 0x0001 /*NOSIZE*/ | 0x0002 /*NOMOVE*/ | 0x0010 /*NOACTIVATE*/);
+        }
+        catch { }
+    }
+
+    private static readonly Dictionary<IntPtr, byte> AlphaByWindow = new();
+
+    private static void AdjustTransparencyFocused(int delta)
+    {
+        try
+        {
+            var hwnd = Native.GetForegroundWindow();
+            if (hwnd == IntPtr.Zero) return;
+            var ex = Native.GetWindowLongPtr(hwnd, (int)Native.GWL_EXSTYLE).ToInt64();
+            if ((ex & Native.WS_EX_LAYERED) == 0)
+            {
+                Native.SetWindowLongPtr(hwnd, (int)Native.GWL_EXSTYLE, new IntPtr(ex | (long)Native.WS_EX_LAYERED));
+                AlphaByWindow[hwnd] = 255;
+            }
+            var alpha = AlphaByWindow.TryGetValue(hwnd, out var a) ? a : (byte)255;
+            int next = Math.Clamp(alpha + delta, 120, 255);
+            AlphaByWindow[hwnd] = (byte)next;
+            Native.SetLayeredWindowAttributes(hwnd, 0, (byte)next, Native.LWA_ALPHA);
+        }
+        catch { }
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT placement);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WINDOWPLACEMENT
+    {
+        public int length, flags, showCmd;
+        public int ptMinX, ptMinY, ptMaxX, ptMaxY;
+        public int rcNormalL, rcNormalT, rcNormalR, rcNormalB;
+    }
+
+    private const int SW_SHOWMAXIMIZED = 3;
+    private const int SW_RESTORE = 9;
+
+    /// <summary>Cycles the case of the selected text: save clipboard, select-copy, transform, paste.</summary>
+    private static void CycleSelectionCase()
+    {
+        WaitForModifierRelease();
+        var saved = ClipboardText.GetText();
+
+        SendPaste(0x11); // Ctrl+C on the selection
+        System.Threading.Thread.Sleep(220);
+        var text = ClipboardText.GetText();
+        if (string.IsNullOrEmpty(text)) return;
+
+        var cycled = text switch
+        {
+            var s when s == s.ToUpperInvariant() && s != s.ToLowerInvariant() => s.ToLowerInvariant(),
+            var s when s == s.ToLowerInvariant() => char.ToUpperInvariant(s[0]) + s[1..].ToLowerInvariant(),
+            var s => s.ToUpperInvariant(),
+        };
+        if (cycled == text) return;
+
+        ClipboardText.SetText(cycled);
+        System.Threading.Thread.Sleep(140);
+        SendPaste();
+        System.Threading.Thread.Sleep(150);
+        ClipboardText.SetText(saved); // restore what the user had
+    }
+
+    /// <summary>Paste with a non-default modifier (e.g. Ctrl+C to capture a selection).</summary>
+    private static void SendPaste(ushort modifier)
+    {
+        var inputs = new Native.INPUT[4];
+        inputs[0].type = Native.INPUT_KEYBOARD;
+        inputs[0].U.ki.wVk = modifier;
+        inputs[1].type = Native.INPUT_KEYBOARD;
+        inputs[1].U.ki.wVk = Native.VK_V;
+        inputs[2].type = Native.INPUT_KEYBOARD;
+        inputs[2].U.ki.wVk = Native.VK_V;
+        inputs[2].U.ki.dwFlags = Native.KEYEVENTF_KEYUP;
+        inputs[3].type = Native.INPUT_KEYBOARD;
+        inputs[3].U.ki.wVk = modifier;
+        inputs[3].U.ki.dwFlags = Native.KEYEVENTF_KEYUP;
+        Native.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<Native.INPUT>());
     }
 }

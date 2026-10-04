@@ -25,6 +25,14 @@ public partial class SettingsViewModel : ViewModelBase
         _showToasts = s.ShowToasts;
         _launchOnStartup = AutostartService.IsEnabled();
         _runAsAdmin = s.RunAsAdmin;
+        _followSystemTheme = s.FollowSystemTheme;
+        _soundOnLaunch = s.SoundOnLaunch;
+        _searchHotkey = s.SearchHotkey ?? "";
+        _pauseHotkey = s.PauseHotkey ?? "";
+        _profileCycleHotkey = s.ProfileCycleHotkey ?? "";
+        _globalExclusions = string.Join("; ", s.GlobalAppExclusions);
+        _profiles = new ObservableCollection<string>(s.Profiles.Select(p => p.Name));
+        _selectedProfile = s.ActiveProfile;
 
         foreach (var a in UiTheme.Accents)
         {
@@ -65,6 +73,92 @@ public partial class SettingsViewModel : ViewModelBase
         : "Running without admin rights — hotkeys won't reach elevated (admin) windows.";
 
     public ObservableCollection<AccentPresetViewModel> AccentPresets { get; } = new();
+
+    // ---- power-user settings ----
+    [ObservableProperty] private bool _followSystemTheme;
+    [ObservableProperty] private bool _soundOnLaunch;
+    [ObservableProperty] private string _searchHotkey;
+    [ObservableProperty] private string _pauseHotkey;
+    [ObservableProperty] private string _profileCycleHotkey;
+    [ObservableProperty] private string _globalExclusions;
+    [ObservableProperty] private string _selectedProfile;
+    [ObservableProperty] private System.Collections.ObjectModel.ObservableCollection<string> _profiles;
+    [ObservableProperty] private string _newProfileName = "";
+
+    public void SetHotkeyField(string which, HotkeyGesture? g)
+    {
+        var text = g?.ToString() ?? "";
+        switch (which)
+        {
+            case "search": SearchHotkey = text; break;
+            case "pause": PauseHotkey = text; break;
+            case "profile": ProfileCycleHotkey = text; break;
+        }
+    }
+
+    partial void OnFollowSystemThemeChanged(bool value)
+    {
+        _config.Settings.FollowSystemTheme = value;
+        _config.Save();
+    }
+
+    partial void OnSoundOnLaunchChanged(bool value)
+    {
+        _config.Settings.SoundOnLaunch = value;
+        _config.Save();
+    }
+
+    partial void OnSearchHotkeyChanged(string value)
+    {
+        _config.Settings.SearchHotkey = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        _config.Save();
+        App.ReapplySystemHotkeys();
+    }
+
+    partial void OnPauseHotkeyChanged(string value)
+    {
+        _config.Settings.PauseHotkey = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        _config.Save();
+        App.ReapplySystemHotkeys();
+    }
+
+    partial void OnProfileCycleHotkeyChanged(string value)
+    {
+        _config.Settings.ProfileCycleHotkey = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        _config.Save();
+        App.ReapplySystemHotkeys();
+    }
+
+    partial void OnGlobalExclusionsChanged(string value)
+    {
+        _config.Settings.GlobalAppExclusions = (value ?? "")
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        _config.Save();
+        KeykoState.SetExclusions(_config.Settings.GlobalAppExclusions);
+    }
+
+    [RelayCommand]
+    private void CreateProfile()
+    {
+        var name = NewProfileName.Trim();
+        if (name.Length == 0 || _config.Settings.Profiles.Any(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase)))
+            return;
+        _config.Settings.Profiles.Add(new ProfileSet { Name = name, Shortcuts = new() });
+        _config.Save();
+        Profiles.Add(name);
+        NewProfileName = "";
+    }
+
+    [RelayCommand]
+    private void SwitchProfile(string? name)
+    {
+        var target = _config.Settings.Profiles.FirstOrDefault(
+            p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+        if (target is null) return;
+        _main.SwitchProfileTo(target);
+        SelectedProfile = target.Name;
+    }
 
     partial void OnGlassOpacityChanged(double value)
     {
@@ -127,7 +221,7 @@ public partial class SettingsViewModel : ViewModelBase
         _config.Save();
         OnPropertyChanged(nameof(IsDarkTheme));
         OnPropertyChanged(nameof(IsLightTheme));
-        foreach (var item in _main.Items) item.Refresh(false);
+        foreach (var item in _main.Items) item.Refresh();
     }
 
     [RelayCommand]

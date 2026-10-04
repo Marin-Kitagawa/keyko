@@ -1,8 +1,5 @@
 using System;
-using System.IO;
-using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Keyko.Models;
 using Keyko.Services;
@@ -13,16 +10,13 @@ public partial class ShortcutItemViewModel : ObservableObject
 {
     public ShortcutAction Model { get; }
 
-    private readonly string _iconsDir;
-
     public event Action<ShortcutItemViewModel>? Toggled;
 
-    public ShortcutItemViewModel(ShortcutAction model, string iconsDir)
+    public ShortcutItemViewModel(ShortcutAction model)
     {
         Model = model;
-        _iconsDir = iconsDir;
         _isEnabled = model.Enabled;
-        RebuildVisuals(reloadIcon: true);
+        RebuildVisuals();
     }
 
     public string Id => Model.Id;
@@ -39,9 +33,7 @@ public partial class ShortcutItemViewModel : ObservableObject
 
     public string Category => Model.Category;
 
-    public string TileGlyph => Model.TileGlyph;
-
-    /// <summary>Segoe Fluent glyph shown when the user hasn't picked an emoji.</summary>
+    /// <summary>Segoe Fluent glyph for the action type — the single consistent icon voice.</summary>
     public string TileFluentGlyph => Model.Type switch
     {
         ActionType.Application => "\uE71D",
@@ -51,22 +43,15 @@ public partial class ShortcutItemViewModel : ObservableObject
         ActionType.Snippet => "\uE77F",
         ActionType.KeySequence => "\uE765",
         ActionType.System => "\uE945",
+        ActionType.Webhook => "\uE8EA",
+        ActionType.Script => "\uE943",
+        ActionType.Expansion => "\uE77B",
         _ => "\uE765",
     };
-
-    public bool TileIsEmoji => !string.IsNullOrEmpty(Model.Emoji);
-
-    public bool TileUseFluentGlyph => !TileIsEmoji && !HasIcon;
 
     public IBrush CategoryBrush { get; private set; } = Brushes.Transparent;
 
     public IBrush CategoryFgBrush { get; private set; } = Brushes.Transparent;
-
-    public IBrush TileBrush { get; private set; } = Brushes.Transparent;
-
-    public IImage? IconImage { get; private set; }
-
-    public bool HasIcon => IconImage is not null;
 
     public string RunCountText => Model.RunCount switch
     {
@@ -91,64 +76,27 @@ public partial class ShortcutItemViewModel : ObservableObject
         }
     }
 
-    public void Refresh(bool reloadIcon = false)
+    public void Refresh()
     {
         IsEnabled = Model.Enabled;
-        RebuildVisuals(reloadIcon);
+        RebuildVisuals();
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Description));
         OnPropertyChanged(nameof(TargetSummary));
         OnPropertyChanged(nameof(HotkeyDisplay));
         OnPropertyChanged(nameof(HasHotkey));
         OnPropertyChanged(nameof(Category));
-        OnPropertyChanged(nameof(TileGlyph));
         OnPropertyChanged(nameof(RunCountText));
         OnPropertyChanged(nameof(LastUsedText));
-        OnPropertyChanged(nameof(IconImage));
-        OnPropertyChanged(nameof(HasIcon));
         OnPropertyChanged(nameof(CategoryBrush));
         OnPropertyChanged(nameof(CategoryFgBrush));
-        OnPropertyChanged(nameof(TileBrush));
     }
 
-    private void RebuildVisuals(bool reloadIcon = true)
+    private void RebuildVisuals()
     {
         var c = UiTheme.CategoryColor(Model.Category);
         CategoryBrush = new SolidColorBrush(UiTheme.WithAlpha(c, 0x2E));
         CategoryFgBrush = new SolidColorBrush(UiTheme.IsDark ? c : UiTheme.Darken(c, 0.25));
-        TileBrush = new LinearGradientBrush
-        {
-            StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
-            EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
-            GradientStops =
-            {
-                new GradientStop(c, 0),
-                new GradientStop(UiTheme.Darken(c, 0.38), 1),
-            },
-        };
-
-        if (reloadIcon && Model.Type == ActionType.Application)
-        {
-            var path = IconCacheService.GetIconPath(Model, _iconsDir);
-            IconImage = path is not null && File.Exists(path) ? LoadBitmap(path) : null;
-        }
-        else if (Model.Type != ActionType.Application)
-        {
-            IconImage = null;
-        }
-    }
-
-    private static IImage? LoadBitmap(string path)
-    {
-        try
-        {
-            using var fs = File.OpenRead(path);
-            return new Bitmap(fs);
-        }
-        catch
-        {
-            return null;
-        }
     }
 
     private static string FormatAge(TimeSpan age) => age.TotalMinutes switch

@@ -1,0 +1,100 @@
+<UserControl x:Class="Keyko.Views.Pages.InsightsPage"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Keyko.ViewModels"
+             x:DataType="vm:InsightsViewModel"
+             x:CompileBindings="True">
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,0">
+    <StackPanel Spacing="14" Margin="2,0,0,14" MaxWidth="880" HorizontalAlignment="Left">
+
+      <StackPanel Orientation="Horizontal" Spacing="10" Margin="2,0,0,2">
+        <TextBlock Text="Insights" Classes="h1" />
+        <Button Classes="ghost" Command="{Binding TogglePauseCommand}" VerticalAlignment="Center">
+          <TextBlock Text="Pause / resume" />
+        </Button>
+        <Button Classes="ghost" Command="{Binding ExportCsvCommand}" VerticalAlignment="Center">
+          <TextBlock Text="Export usage CSV" />
+        </Button>
+      </StackPanel>
+
+      <TextBlock Text="{Binding PausedText}" Classes="ter" FontSize="12" IsVisible="{Binding PausedText}" />
+
+      <!-- usage -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Usage" Classes="h2" />
+          <ItemsControl ItemsSource="{Binding Usage}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:InsightsViewModel+UsageRow">
+                <Grid ColumnDefinitions="200,72,284,80" Margin="0,0,0,8" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="kbd" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding Hotkey}" />
+                  </TextBlock>
+                  <ProgressBar Grid.Column="2" Value="{Binding Runs}" Maximum="100000" Height="10"
+                               VerticalAlignment="Center" Foreground="{Binding BarBrush}" />
+                  <TextBlock Grid.Column="3" Text="{Binding Runs}" Classes="ter" FontSize="12"
+                             VerticalAlignment="Center" HorizontalAlignment="Right" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="{Binding TotalLaunches, StringFormat='{}{0} total launches'}" Classes="ter" FontSize="11" />
+        </StackPanel>
+      </Border>
+
+      <!-- doctor -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Hotkey doctor" Classes="h2" />
+          <TextBlock Text="{Binding ArmedCount, StringFormat='{}{0} shortcuts armed'}" Classes="sec" FontSize="12" />
+          <ItemsControl ItemsSource="{Binding Doctor}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:InsightsViewModel+DoctorRow">
+                <Grid ColumnDefinitions="220,140,110,220" Margin="0,0,0,8" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="1" Classes="kbd" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Hotkey}" />
+                  </TextBlock>
+                  <TextBlock Grid.Column="2" Text="{Binding State}" FontSize="12" FontWeight="Normal"
+                             Foreground="{Binding StateBrush}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="3" Text="{Binding Note}" Classes="ter" FontSize="11"
+                             VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <!-- clipboard ring -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBlock Text="Clipboard ring" Classes="h2" />
+            <Button Classes="ghost" Command="{Binding ClearRingCommand}" VerticalAlignment="Center">
+              <TextBlock Text="Clear" />
+            </Button>
+          </StackPanel>
+          <TextBlock Classes="ter" FontSize="11"
+                     Text="The last 12 text clipboard entries, captured automatically. Paste any of them from here." />
+          <ItemsControl ItemsSource="{Binding Ring}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:InsightsViewModel+RingRow">
+                <Border Classes="row" Margin="0,0,0,8" Padding="10">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{Binding Preview}" FontSize="12" TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1" Classes="ghost" Content="Paste" Command="{Binding $parent[ItemsControl].((vm:InsightsViewModel)DataContext).PasteRingItemCommand}"
+                            CommandParameter="{Binding Text}" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

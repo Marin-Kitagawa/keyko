@@ -74,6 +74,13 @@
                 <TextBlock Text="Settings" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="19" VerticalAlignment="Center" />
               </StackPanel>
             </Button>
+            <Button x:Name="NavInsights" Classes="navItem" Command="{Binding ShowInsightsCommand}"
+                    Classes.active="{Binding IsOnInsights}">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Classes="glyph" Text="&#xE9D9;" VerticalAlignment="Center" />
+                <TextBlock Text="Insights" FontFamily="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" FontSize="19" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
             <Button x:Name="NavAbout" Classes="navItem" Command="{Binding ShowAboutCommand}"
                     Classes.active="{Binding IsOnAbout}">
               <StackPanel Orientation="Horizontal">

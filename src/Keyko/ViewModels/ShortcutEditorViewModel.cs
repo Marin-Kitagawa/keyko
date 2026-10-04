@@ -21,16 +21,25 @@ public partial class ShortcutEditorViewModel : ViewModelBase
         _name = model.Name;
         _description = model.Description ?? "";
         _category = model.Category;
-        _targetText = model.Type == ActionType.System || model.Type == ActionType.KeySequence ? "" : model.Target;
+        _targetText = model.Type is ActionType.System or ActionType.KeySequence or ActionType.Script
+            or ActionType.Expansion ? "" : model.Target;
         _arguments = model.Arguments ?? "";
         _workingDirectory = model.WorkingDirectory ?? "";
         _snippetText = model.Type == ActionType.Snippet ? model.Target : "";
         _sequenceText = model.Type == ActionType.KeySequence ? model.Target : "";
+        _scriptText = model.Type == ActionType.Script ? model.Target : "";
+        _webhookBody = model.Body ?? "";
+        _httpMethod = string.IsNullOrWhiteSpace(model.HttpMethod) ? "POST" : model.HttpMethod;
+        _abbreviation = model.Type == ActionType.Expansion ? model.Abbreviation ?? "" : model.Abbreviation ?? "";
+        _onlyInApps = model.OnlyInApps ?? "";
+        _notInApps = model.NotInApps ?? "";
+        _scheduleIndex = (int)model.Schedule;
+        _scheduleIntervalMinutes = model.ScheduleIntervalMinutes.ToString();
+        _scheduleDailyTime = model.ScheduleDailyTime ?? "09:00";
         _systemActionIndex = model.Type == ActionType.System
             ? Math.Max(0, Array.FindIndex(SystemActionInfo.All, x => x.Kind.ToString() == model.Target))
             : 0;
         _hotkeyDisplay = model.Gesture?.Display ?? "";
-        _emoji = model.Emoji ?? "";
         _enabled = model.Enabled;
         _showToast = model.ShowToast;
 
@@ -48,6 +57,9 @@ public partial class ShortcutEditorViewModel : ViewModelBase
     [ObservableProperty] private bool _isTypeCommand;
     [ObservableProperty] private bool _isTypeSnippet;
     [ObservableProperty] private bool _isTypeKeySequence;
+    [ObservableProperty] private bool _isTypeWebhook;
+    [ObservableProperty] private bool _isTypeScript;
+    [ObservableProperty] private bool _isTypeExpansion;
     [ObservableProperty] private bool _isTypeSystem;
 
     private ActionType SelectedType => IsTypeApplication ? ActionType.Application
@@ -56,6 +68,9 @@ public partial class ShortcutEditorViewModel : ViewModelBase
         : IsTypeCommand ? ActionType.Command
         : IsTypeSnippet ? ActionType.Snippet
         : IsTypeKeySequence ? ActionType.KeySequence
+        : IsTypeWebhook ? ActionType.Webhook
+        : IsTypeScript ? ActionType.Script
+        : IsTypeExpansion ? ActionType.Expansion
         : ActionType.System;
 
     private void SetTypeFlags(ActionType t)
@@ -66,6 +81,9 @@ public partial class ShortcutEditorViewModel : ViewModelBase
         IsTypeCommand = t == ActionType.Command;
         IsTypeSnippet = t == ActionType.Snippet;
         IsTypeKeySequence = t == ActionType.KeySequence;
+        IsTypeWebhook = t == ActionType.Webhook;
+        IsTypeScript = t == ActionType.Script;
+        IsTypeExpansion = t == ActionType.Expansion;
         IsTypeSystem = t == ActionType.System;
         OnPropertyChanged(nameof(TargetLabel));
         OnPropertyChanged(nameof(SystemActionHint));
@@ -102,27 +120,40 @@ public partial class ShortcutEditorViewModel : ViewModelBase
     [ObservableProperty] private string _workingDirectory;
     [ObservableProperty] private string _snippetText;
     [ObservableProperty] private string _sequenceText;
+    [ObservableProperty] private string _scriptText;
+    [ObservableProperty] private string _webhookBody;
+    [ObservableProperty] private string _httpMethod;
+    [ObservableProperty] private string _abbreviation;
     [ObservableProperty] private int _systemActionIndex;
     [ObservableProperty] private string _hotkeyDisplay;
-    [ObservableProperty] private string _emoji;
 
-    partial void OnEmojiChanged(string value) => OnPropertyChanged(nameof(EmojiDisplay));
+    partial void OnHotkeyDisplayChanged(string value)
+    {
+        ValidateHotkey();
+        OnPropertyChanged(nameof(HasHotkeyDisplay));
+    }
+
     [ObservableProperty] private bool _enabled;
     [ObservableProperty] private bool _showToast;
     [ObservableProperty] private string _hotkeyWarning = "";
+
+    // scheduling
+    [ObservableProperty] private int _scheduleIndex; // 0 = none, 1 = interval, 2 = daily
+    [ObservableProperty] private string _scheduleIntervalMinutes = "30";
+    [ObservableProperty] private string _scheduleDailyTime = "09:00";
+
+    // per-app scoping
+    [ObservableProperty] private string _onlyInApps;
+    [ObservableProperty] private string _notInApps;
+
+    public ScheduleMode SelectedSchedule => (ScheduleMode)Math.Clamp(ScheduleIndex, 0, 2);
 
     public bool HasHotkeyWarning => !string.IsNullOrEmpty(HotkeyWarning);
 
     partial void OnSystemActionIndexChanged(int value)
     {
         if (SelectedType == ActionType.System)
-            AutoFillEmoji();
-    }
-
-    partial void OnHotkeyDisplayChanged(string value)
-    {
-        ValidateHotkey();
-        OnPropertyChanged(nameof(HasHotkeyDisplay));
+            OnPropertyChanged(nameof(SystemActionHint));
     }
 
     public bool HasHotkeyDisplay => !string.IsNullOrEmpty(HotkeyDisplay);
@@ -132,18 +163,12 @@ public partial class ShortcutEditorViewModel : ViewModelBase
             ? "Built-in: uses Windows API directly, no external program needed."
             : "";
 
-    public string EmojiDisplay => string.IsNullOrEmpty(Emoji) ? "🎨" : Emoji;
-
     public sealed record SystemActionOption(SystemActionKind Kind, string Name, string Glyph);
 
     public IReadOnlyList<SystemActionOption> SystemActions { get; } =
         SystemActionInfo.All.Select(a => new SystemActionOption(a.Kind, a.Name, a.Glyph)).ToList();
 
-    public IReadOnlyList<string> EmojiChoices { get; } = new[]
-    {
-        "🚀", "⚡", "📁", "🌐", "🖥️", "📋", "🎵", "🎮", "💻", "📧", "📝", "🔧",
-        "🧩", "🛠️", "📊", "🧠", "⭐", "🔥", "🌙", "☀️", "🎨", "🍀", "💬", "🔒",
-    };
+    public IReadOnlyList<string> HttpMethodChoices { get; } = new[] { "GET", "POST", "PUT", "PATCH", "DELETE" };
 
     public bool CanSave =>
         !string.IsNullOrWhiteSpace(Name)
@@ -153,6 +178,9 @@ public partial class ShortcutEditorViewModel : ViewModelBase
             ActionType.Snippet => true,
             ActionType.System => true,
             ActionType.KeySequence => !string.IsNullOrWhiteSpace(SequenceText),
+            ActionType.Webhook => !string.IsNullOrWhiteSpace(TargetText),
+            ActionType.Script => !string.IsNullOrWhiteSpace(ScriptText),
+            ActionType.Expansion => !string.IsNullOrWhiteSpace(Abbreviation) && !string.IsNullOrWhiteSpace(TargetText),
             _ => !string.IsNullOrWhiteSpace(TargetText),
         };
 
@@ -182,15 +210,6 @@ public partial class ShortcutEditorViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasHotkeyWarning));
     }
 
-    public void AutoFillEmoji()
-    {
-        Emoji = SelectedType == ActionType.System && SystemActionInfo.All.Length > 0
-            ? SystemActionInfo.All[SystemActionIndex].Glyph
-            : ShortcutAction.TypeEmoji(SelectedType);
-    }
-
-    public void ClearEmoji() => Emoji = "";
-
     public void RunTest()
     {
         _testRun?.Invoke();
@@ -211,15 +230,26 @@ public partial class ShortcutEditorViewModel : ViewModelBase
         {
             ActionType.Snippet => SnippetText,
             ActionType.KeySequence => SequenceText,
+            ActionType.Script => ScriptText,
+            ActionType.Webhook => TargetText.Trim(),
+            ActionType.Expansion => TargetText,
             ActionType.System => SystemActionInfo.All.Length > 0
                 ? SystemActionInfo.All[Math.Clamp(SystemActionIndex, 0, SystemActionInfo.All.Length - 1)].Kind.ToString()
                 : "",
             _ => TargetText.Trim(),
         };
         target.Hotkey = CurrentGesture?.ToString();
-        target.Emoji = string.IsNullOrWhiteSpace(Emoji) ? null : Emoji.Trim();
         target.Enabled = Enabled;
         target.ShowToast = ShowToast;
+        target.HttpMethod = SelectedType == ActionType.Webhook ? HttpMethod : "POST";
+        target.Body = SelectedType == ActionType.Webhook && !string.IsNullOrWhiteSpace(WebhookBody)
+            ? WebhookBody : null;
+        target.Abbreviation = SelectedType == ActionType.Expansion ? Abbreviation.Trim() : null;
+        target.Schedule = (ScheduleMode)Math.Clamp(ScheduleIndex, 0, 2);
+        target.ScheduleIntervalMinutes = int.TryParse(ScheduleIntervalMinutes, out var mins) ? Math.Max(1, mins) : 30;
+        target.ScheduleDailyTime = ScheduleDailyTime;
+        target.OnlyInApps = string.IsNullOrWhiteSpace(OnlyInApps) ? null : OnlyInApps.Trim();
+        target.NotInApps = string.IsNullOrWhiteSpace(NotInApps) ? null : NotInApps.Trim();
         return target;
     }
 }

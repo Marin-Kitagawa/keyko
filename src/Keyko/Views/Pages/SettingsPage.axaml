@@ -2,6 +2,7 @@
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Keyko.ViewModels"
+             xmlns:controls="clr-namespace:Keyko.Views"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
 
@@ -79,6 +80,68 @@
           <TextBlock Text="{Binding ElevationStatus}" Classes="ter" FontSize="11" Margin="0,-8,0,0" TextWrapping="Wrap" />
           <ToggleSwitch IsChecked="{Binding StartMinimized}" Content="Start minimized to the tray" />
           <ToggleSwitch IsChecked="{Binding ShowToasts}" Content="Show a toast when a hotkey fires" />
+          <ToggleSwitch IsChecked="{Binding SoundOnLaunch}" Content="Play a soft chime when a hotkey fires" />
+          <ToggleSwitch IsChecked="{Binding FollowSystemTheme}" Content="Follow the Windows dark/light setting" />
+        </StackPanel>
+      </Border>
+
+      <!-- system hotkeys -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <TextBlock Text="System hotkeys" Classes="h2" />
+          <TextBlock Classes="ter" FontSize="11"
+                     Text="Reserved combos for Keyko itself. Esc while recording clears a combo; leave empty to disable." />
+          <Grid ColumnDefinitions="180,Auto" Margin="0,0,0,8">
+            <TextBlock Text="Search overlay" VerticalAlignment="Center" />
+            <controls:HotkeyRecorderBox Grid.Column="1" Width="220" HorizontalAlignment="Left" x:Name="SearchRecorder" />
+          </Grid>
+          <Grid ColumnDefinitions="180,Auto" Margin="0,0,0,8">
+            <TextBlock Text="Pause / resume Keyko" VerticalAlignment="Center" />
+            <controls:HotkeyRecorderBox Grid.Column="1" Width="220" HorizontalAlignment="Left" x:Name="PauseRecorder" />
+          </Grid>
+          <Grid ColumnDefinitions="180,Auto" Margin="0,0,0,8">
+            <TextBlock Text="Cycle profile" VerticalAlignment="Center" />
+            <controls:HotkeyRecorderBox Grid.Column="1" Width="220" HorizontalAlignment="Left" x:Name="ProfileRecorder" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- profiles -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Profiles" Classes="h2" />
+          <TextBlock Classes="ter" FontSize="11"
+                     Text="Each profile keeps its own set of shortcuts. Switching swaps the armed hotkeys instantly." />
+          <ItemsControl ItemsSource="{Binding Profiles}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <Border Classes="row" Margin="0,0,0,8" Padding="10">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{Binding}" FontSize="13" VerticalAlignment="Center" />
+                    <Button Grid.Column="1" Classes="ghost" Content="Switch"
+                            Command="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).SwitchProfileCommand}"
+                            CommandParameter="{Binding}" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Watermark="New profile name…" Text="{Binding NewProfileName}" />
+            <Button Grid.Column="1" Margin="8,0,0,0" Command="{Binding CreateProfileCommand}">
+              <TextBlock Text="Create" />
+            </Button>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- exclusions -->
+      <Border Classes="card">
+        <StackPanel Spacing="12">
+          <TextBlock Text="App exclusions" Classes="h2" />
+          <TextBlock Classes="ter" FontSize="11"
+                     Text="Keyko sleeps in these apps. Semicolon-separated exe names without .exe — e.g. cs2; valorant; ExampleApp." />
+          <TextBox Watermark="cs2; valorant" Text="{Binding GlobalExclusions}" AcceptsReturn="False" />
         </StackPanel>
       </Border>
 

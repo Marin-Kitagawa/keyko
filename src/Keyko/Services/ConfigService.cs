@@ -9,7 +9,7 @@ namespace Keyko.Services;
 /// <summary>
 /// Loads/saves the JSON profile under %APPDATA%\Keyko (or KEYKO_CONFIG_DIR override).
 /// </summary>
-public sealed class ConfigService
+public sealed partial class ConfigService
 {
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
@@ -122,4 +122,17 @@ public sealed class ConfigService
             },
         }
     };
+}
+
+public partial class ConfigService
+{
+    /// <summary>One-time migration: adopt existing shortcuts into the Default profile.</summary>
+    public void Migrate()
+    {
+        if (Settings.Profiles.Count == 0 && Settings.Shortcuts.Count > 0)
+        {
+            Settings.Profiles.Add(new ProfileSet { Name = "Default", Shortcuts = Settings.Shortcuts });
+            Save();
+        }
+    }
 }

@@ -13,7 +13,23 @@ public enum ActionType
     Command,
     Snippet,
     KeySequence,
-    System
+    System,
+    Webhook,
+    Script,
+    Expansion
+}
+
+public enum ScheduleMode
+{
+    None,
+    Interval,
+    Daily
+}
+
+public sealed class ProfileSet
+{
+    public string Name { get; set; } = "Default";
+    public List<ShortcutAction> Shortcuts { get; set; } = new();
 }
 
 public enum SystemActionKind
@@ -40,6 +56,15 @@ public enum SystemActionKind
 
     // clipboard & input
     ClearClipboard, PasteAsPlainText, MicMute,
+
+    // window management
+    SnapLeft, SnapRight, SnapMaximize, AlwaysOnTop,
+    TransparencyUp, TransparencyDown,
+    VirtualDesktopNext, VirtualDesktopPrevious,
+    MoveWindowLeft, MoveWindowRight,
+
+    // tools
+    ColorPicker, OcrRegion, CaseCycle, PauseKeyko,
 }
 
 public static class SystemActionInfo
@@ -98,6 +123,24 @@ public static class SystemActionInfo
         (SystemActionKind.ClearClipboard,     "Clear the clipboard",       "\uE74D"),
         (SystemActionKind.PasteAsPlainText,   "Paste as plain text",       "\uE77F"),
         (SystemActionKind.MicMute,            "Mute / unmute microphone",  "\uE720"),
+
+        // window management
+        (SystemActionKind.SnapLeft,           "Snap window left",          "\uE8A7"),
+        (SystemActionKind.SnapRight,          "Snap window right",         "\uE8A7"),
+        (SystemActionKind.SnapMaximize,       "Maximize / restore window", "\uE922"),
+        (SystemActionKind.AlwaysOnTop,        "Toggle always on top",      "\uE718"),
+        (SystemActionKind.TransparencyUp,     "Window transparency up",    "\uE7B3"),
+        (SystemActionKind.TransparencyDown,   "Window transparency down",  "\uE7B3"),
+        (SystemActionKind.VirtualDesktopNext, "Next virtual desktop",      "\uE7EC"),
+        (SystemActionKind.VirtualDesktopPrevious, "Previous virtual desktop", "\uE892"),
+        (SystemActionKind.MoveWindowLeft,     "Move window to left desktop",  "\uE898"),
+        (SystemActionKind.MoveWindowRight,    "Move window to right desktop", "\uE896"),
+
+        // tools
+        (SystemActionKind.ColorPicker,        "Color picker (copy hex)",   "\uE790"),
+        (SystemActionKind.OcrRegion,          "Copy text from screen (OCR)", "\uE91B"),
+        (SystemActionKind.CaseCycle,          "Cycle case of selection",   "\uE8E9"),
+        (SystemActionKind.PauseKeyko,         "Pause / resume Keyko",      "\uE769"),
     };
 
     public static string DisplayName(string? target) =>
@@ -134,6 +177,23 @@ public sealed class ShortcutAction
     public DateTime? LastUsedAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+    // expansion
+    public string? Abbreviation { get; set; }
+
+    // webhook
+    public string? HttpMethod { get; set; } = "POST";
+    public string? Body { get; set; }
+
+    // scheduling
+    public ScheduleMode Schedule { get; set; } = ScheduleMode.None;
+    public int ScheduleIntervalMinutes { get; set; } = 30;
+    public string? ScheduleDailyTime { get; set; } = "09:00";
+    public DateTime? LastFiredAt { get; set; }
+
+    // per-app scoping (semicolon-separated exe names, without .exe)
+    public string? OnlyInApps { get; set; }
+    public string? NotInApps { get; set; }
+
     [JsonIgnore] public HotkeyGesture? Gesture => HotkeyGesture.TryParse(Hotkey, out var g) ? g : null;
 
     [JsonIgnore] public bool HasHotkey => Gesture is not null;
@@ -146,27 +206,32 @@ public sealed class ShortcutAction
         ActionType.Snippet => "Paste: " + (Target.Length > 44 ? Target[..44] + "…" : Target),
         ActionType.KeySequence => "Keys: " + (Target.Length > 44 ? Target[..44] + "…" : Target),
         ActionType.System => SystemActionInfo.DisplayName(Target),
+        ActionType.Webhook => "Webhook: " + (Target.Length > 40 ? Target[..40] + "…" : Target),
+        ActionType.Script => "Script: " + (Target.Length > 40 ? Target[..40] + "…" : Target),
+        ActionType.Expansion => "Expand: " + (Abbreviation ?? "") + " → " + (Target.Length > 30 ? Target[..30] + "…" : Target),
         _ => Target,
     };
 
-    public static string TypeEmoji(ActionType t) => t switch
+    public static string TypeGlyph(ActionType t) => t switch
     {
-        ActionType.Application => "🚀",
-        ActionType.Folder => "📁",
-        ActionType.Url => "🌐",
-        ActionType.Command => "🖥️",
-        ActionType.Snippet => "📋",
-        ActionType.KeySequence => "⌨️",
-        ActionType.System => "⚡",
-        _ => "⭐",
+        ActionType.Application => "\uE71D",
+        ActionType.Folder => "\uE8B7",
+        ActionType.Url => "\uE774",
+        ActionType.Command => "\uE756",
+        ActionType.Snippet => "\uE77F",
+        ActionType.KeySequence => "\uE765",
+        ActionType.System => "\uE945",
+        ActionType.Webhook => "\uE8EA",
+        ActionType.Script => "\uE943",
+        ActionType.Expansion => "\uE77B",
+        _ => "\uE7C3",
     };
-
-    [JsonIgnore] public string TileGlyph => string.IsNullOrEmpty(Emoji) ? TypeEmoji(Type) : Emoji!;
 }
 
 public sealed class AppSettings
 {
     public string Theme { get; set; } = "Dark"; // Dark | Light
+    public bool FollowSystemTheme { get; set; }
     public string Accent1 { get; set; } = "#F472B6";
     public string Accent2 { get; set; } = "#A78BFA";
     public double GlassTintOpacity { get; set; } = 0.72;
@@ -174,5 +239,38 @@ public sealed class AppSettings
     public bool RunAsAdmin { get; set; }
     public bool StartMinimized { get; set; } = true;
     public bool ShowToasts { get; set; } = true;
+    public bool SoundOnLaunch { get; set; }
+    public string? SearchHotkey { get; set; } = "Ctrl+Alt+Space";
+    public string? PauseHotkey { get; set; }
+    public string? ProfileCycleHotkey { get; set; }
+    public string ActiveProfile { get; set; } = "Default";
+    public List<ProfileSet> Profiles { get; set; } = new();
+    public List<string> GlobalAppExclusions { get; set; } = new();
     public List<ShortcutAction> Shortcuts { get; set; } = new();
+}
+
+public static class ShortcutActionExtensions
+{
+    public static ShortcutAction Clone(this ShortcutAction a) => new()
+    {
+        Id = Guid.NewGuid().ToString("N"),
+        Name = a.Name,
+        Description = a.Description,
+        Category = a.Category,
+        Type = a.Type,
+        Target = a.Target,
+        Arguments = a.Arguments,
+        WorkingDirectory = a.WorkingDirectory,
+        Hotkey = a.Hotkey,
+        Enabled = a.Enabled,
+        ShowToast = a.ShowToast,
+        Abbreviation = a.Abbreviation,
+        HttpMethod = a.HttpMethod,
+        Body = a.Body,
+        Schedule = a.Schedule,
+        ScheduleIntervalMinutes = a.ScheduleIntervalMinutes,
+        ScheduleDailyTime = a.ScheduleDailyTime,
+        OnlyInApps = a.OnlyInApps,
+        NotInApps = a.NotInApps,
+    };
 }
