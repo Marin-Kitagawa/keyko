@@ -264,14 +264,16 @@ public partial class MainViewModel : ViewModelBase
             item?.Refresh();
             UpdateStats();
             _config.Save();
+            if (_config.Settings.SoundOnLaunch) Chime.Play();
             ToastService.Show(action.Name,
                 manual ? "Launched manually" : action.Gesture?.Display,
-                glyph: "E768",
+                glyph: "\uE768",
                 settings: _config.Settings);
         }
         else
         {
-            ToastService.Show("Couldn't launch " + action.Name, error, glyph: "E783", settings: null);
+            if (_config.Settings.SoundOnLaunch) Chime.PlayError();
+            ToastService.Show("Couldn't launch " + action.Name, error, glyph: "\uE783", settings: null);
         }
     }
 

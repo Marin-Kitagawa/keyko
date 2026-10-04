@@ -59,7 +59,7 @@ public partial class App : Application
                         glyph: armed > 0 ? "\uE73E" : "\uE783",
                         settings: null);
                     if (AppServices.Config.Settings.SoundOnLaunch && armed > 0)
-                        try { Keyko.Interop.Native.MessageBeep(0xFFFFFFFFu); } catch { }
+                        try { Services.Chime.Play(); } catch { }
                 };
 
                 // foreground tracking (per-app scoping, exclusions, insights)
