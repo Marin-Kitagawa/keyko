@@ -22,6 +22,10 @@ public static class UiTheme
     public static readonly (string Name, string C1, string C2)[] Accents =
     {
         ("Blossom",  "#F472B6", "#A78BFA"),
+        ("Sakura",   "#F8BBD0", "#F5C5DA"),
+        ("Frost",    "#A5D8FF", "#C5F6FA"),
+        ("Sunset",   "#FF9A8B", "#FF6A88"),
+        ("Cappuccino", "#D5B895", "#A67B5B"),
         ("Rose",     "#FB7185", "#FDA4AF"),
         ("Peach",    "#FDBA74", "#F9A8D4"),
         ("Lavender", "#A78BFA", "#93C5FD"),

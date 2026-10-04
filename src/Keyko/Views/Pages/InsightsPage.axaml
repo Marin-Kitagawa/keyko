@@ -26,7 +26,7 @@
           <TextBlock Text="Usage" Classes="h2" />
           <ItemsControl ItemsSource="{Binding Usage}">
             <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:UsageRow">
+              <DataTemplate x:DataType="vm:InsightsViewModel+UsageRow">
                 <Grid ColumnDefinitions="200,72,284,80" Margin="0,0,0,8" VerticalAlignment="Center">
                   <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                   <TextBlock Grid.Column="1" Classes="kbd" VerticalAlignment="Center" HorizontalAlignment="Left">
@@ -51,7 +51,7 @@
           <TextBlock Text="{Binding ArmedCount, StringFormat='{}{0} shortcuts armed'}" Classes="sec" FontSize="12" />
           <ItemsControl ItemsSource="{Binding Doctor}">
             <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:DoctorRow">
+              <DataTemplate x:DataType="vm:InsightsViewModel+DoctorRow">
                 <Grid ColumnDefinitions="220,140,110,220" Margin="0,0,0,8" VerticalAlignment="Center">
                   <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" />
                   <TextBlock Grid.Column="1" Classes="kbd" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -81,7 +81,7 @@
                      Text="The last 12 text clipboard entries, captured automatically. Paste any of them from here." />
           <ItemsControl ItemsSource="{Binding Ring}">
             <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:RingRow">
+              <DataTemplate x:DataType="vm:InsightsViewModel+RingRow">
                 <Border Classes="row" Margin="0,0,0,8" Padding="10">
                   <Grid ColumnDefinitions="*,Auto">
                     <TextBlock Text="{Binding Preview}" FontSize="12" TextTrimming="CharacterEllipsis"
