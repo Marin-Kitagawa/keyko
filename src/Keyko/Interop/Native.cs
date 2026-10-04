@@ -296,6 +296,7 @@ internal static class Native
         public uint time;
         public IntPtr dwExtraInfo;
     }
-}
 
-    // populated inside the Native class below
+    [DllImport("user32.dll")]
+    public static extern bool MessageBeep(uint type);
+}

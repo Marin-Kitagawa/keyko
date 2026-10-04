@@ -76,7 +76,7 @@ public partial class MainWindow : Window
             {
                 try
                 {
-                    var ok = FontManager.Current.TryGetGlyphTypeface(new Typeface(family!), out var gt);
+                    var ok = FontManager.Current.TryGetGlyphTypeface(new Typeface(family), out var gt);
                     Console.WriteLine($"DIAG font {name}: glyph={(ok ? gt!.FamilyName : "FAIL")}");
                 }
                 catch (Exception ex)
@@ -107,13 +107,14 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ShowPage(NavPage page)
+    public void ShowPage(NavPage page)
     {
         var vm = _vm ?? DataContext as MainViewModel;
         if (vm is null) return;
         Pages.Content = page switch
         {
             NavPage.Settings => new SettingsPage { DataContext = vm.SettingsVM },
+            NavPage.Insights => new InsightsPage { DataContext = vm.InsightsVM },
             NavPage.About => new AboutPage(),
             _ => new ShortcutsPage { DataContext = vm },
         };

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ using Keyko.Views;
 
 namespace Keyko.ViewModels;
 
-public enum NavPage { Shortcuts, Settings, About }
+public enum NavPage { Shortcuts, Insights, Settings, About }
 
 public partial class MainViewModel : ViewModelBase
 {
@@ -39,7 +40,69 @@ public partial class MainViewModel : ViewModelBase
 
     public ConfigService Config => _config;
 
+    // ---- profiles ----
+    public IReadOnlyList<ProfileSet> Profiles => _config.Settings.Profiles;
+
+    public string ActiveProfileName => _config.Settings.ActiveProfile;
+
+    public void SwitchProfileTo(ProfileSet target)
+    {
+        if (string.Equals(target.Name, _config.Settings.ActiveProfile, StringComparison.OrdinalIgnoreCase)) return;
+
+        // stash current set
+        var current = _config.Settings.Profiles.FirstOrDefault(
+            p => p.Name == _config.Settings.ActiveProfile);
+        if (current is null)
+        {
+            current = new ProfileSet { Name = _config.Settings.ActiveProfile };
+            _config.Settings.Profiles.Add(current);
+        }
+        current.Shortcuts = _config.Settings.Shortcuts;
+
+        var incoming = target.Shortcuts;
+        _config.Settings.Profiles.Remove(target);
+        _config.Settings.Profiles.Insert(0, new ProfileSet { Name = target.Name, Shortcuts = incoming });
+        _config.Settings.ActiveProfile = target.Name;
+        _config.Settings.Shortcuts = incoming;
+        _config.Save();
+
+        ReloadItems();
+        RegisterHotkeys();
+        SchedulerService.SetScheduled(incoming);
+        ToastService.Show("Profile: " + target.Name, $"{incoming.Count} shortcuts armed", "\uE8EC", settings: null);
+    }
+
+    public bool SwitchProfileByName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return false;
+        var target = Profiles.FirstOrDefault(p => string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
+        if (target is null) return false;
+        SwitchProfileTo(target);
+        return true;
+    }
+
+    public void CycleProfile()
+    {
+        if (Profiles.Count < 2) return;
+        var idx = Profiles.ToList().FindIndex(p => p.Name == ActiveProfileName);
+        SwitchProfileTo(Profiles[(idx + 1) % Profiles.Count]);
+    }
+
+    /// <summary>Rebuilds Items from config after a profile switch or import.</summary>
+    public void ReloadItems()
+    {
+        Items.Clear();
+        FilteredItems.Clear();
+        foreach (var m in _config.Settings.Shortcuts)
+            AddItem(new ShortcutItemViewModel(m));
+        RebuildCategories();
+        ApplyFilter();
+        UpdateStats();
+    }
+
     public SettingsViewModel SettingsVM => new(_config, this);
+
+    public InsightsViewModel InsightsVM => new(this, _config);
 
     public ObservableCollection<ShortcutItemViewModel> Items { get; } = new();
 
@@ -55,6 +118,7 @@ public partial class MainViewModel : ViewModelBase
 
     public bool IsOnShortcuts => CurrentPage == NavPage.Shortcuts;
     public bool IsOnSettings => CurrentPage == NavPage.Settings;
+    public bool IsOnInsights => CurrentPage == NavPage.Insights;
     public bool IsOnAbout => CurrentPage == NavPage.About;
     public bool HasVisibleItems => FilteredItems.Count > 0;
 
@@ -62,6 +126,7 @@ public partial class MainViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(IsOnShortcuts));
         OnPropertyChanged(nameof(IsOnSettings));
+        OnPropertyChanged(nameof(IsOnInsights));
         OnPropertyChanged(nameof(IsOnAbout));
     }
 
@@ -70,6 +135,9 @@ public partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void ShowSettings() => SetPage(NavPage.Settings);
+
+    [RelayCommand]
+    private void ShowInsights() => SetPage(NavPage.Insights);
 
     [RelayCommand]
     private void ShowAbout() => SetPage(NavPage.About);
@@ -168,7 +236,10 @@ public partial class MainViewModel : ViewModelBase
         var names = string.Join(", ", failed.Select(f => f.Gesture?.Display ?? f.Name));
         ConflictText = names.Length == 0 ? "" : $"Hotkey(s) {names} couldn't be registered — already used by another app.";
         HasConflicts = ConflictText.Length > 0;
+        ConflictShortcuts = failed.ToList();
     }
+
+    public System.Collections.Generic.IReadOnlyList<ShortcutAction>? ConflictShortcuts { get; private set; }
 
     public void ClearConflictBanner()
     {

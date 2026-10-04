@@ -94,6 +94,27 @@
                       <TextBlock Text="Key sequence" VerticalAlignment="Center" />
                     </StackPanel>
                   </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeWebhook}"
+                          Click="OnTypeClick" Tag="Webhook" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE8EA;" VerticalAlignment="Center" />
+                      <TextBlock Text="Webhook" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeScript}"
+                          Click="OnTypeClick" Tag="Script" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE943;" VerticalAlignment="Center" />
+                      <TextBlock Text="Script" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button Classes="seg" Classes.selected="{Binding IsTypeExpansion}"
+                          Click="OnTypeClick" Tag="Expansion" Margin="0,0,8,8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                      <TextBlock Classes="glyph g12" Text="&#xE77B;" VerticalAlignment="Center" />
+                      <TextBlock Text="Text expansion" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
                   <Button Classes="seg" Classes.selected="{Binding IsTypeSystem}"
                           Click="OnTypeClick" Tag="System" Margin="0,0,8,8">
                     <StackPanel Orientation="Horizontal" Spacing="7">
@@ -166,6 +187,40 @@
                   <TextBlock Classes="ter" FontSize="11" Text="{Binding SequenceHint}" TextWrapping="Wrap" />
                 </StackPanel>
 
+                <!-- webhook -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeWebhook}">
+                  <TextBox Watermark="https://hooks.example.com/abc123" Text="{Binding TargetText}" />
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <ComboBox ItemsSource="{Binding HttpMethodChoices}" SelectedItem="{Binding HttpMethod}" Width="130" />
+                    <TextBlock Classes="ter" FontSize="11.5" VerticalAlignment="Center"
+                               Text="Fires the request; the body is skipped for GET." />
+                  </StackPanel>
+                  <TextBox Watermark="Request body (JSON, form data…)" Text="{Binding WebhookBody}"
+                           AcceptsReturn="True" TextWrapping="Wrap" MinHeight="70" />
+                </StackPanel>
+
+                <!-- script -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeScript}">
+                  <TextBox Watermark="Get-Process | Select-Object -First 3" Text="{Binding ScriptText}"
+                           AcceptsReturn="True" TextWrapping="Wrap" MinHeight="92" FontFamily="Consolas, Cascadia Mono" />
+                  <TextBlock Classes="ter" FontSize="11"
+                             Text="Runs hidden via Windows PowerShell. Errors surface as a toast." />
+                </StackPanel>
+
+                <!-- expansion -->
+                <StackPanel Spacing="10" IsVisible="{Binding IsTypeExpansion}">
+                  <Grid ColumnDefinitions="220,*">
+                    <TextBox Watermark=";addr" Text="{Binding Abbreviation}" />
+                    <TextBlock Grid.Column="1" Classes="ter" FontSize="11.5" Margin="10,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="The abbreviation you type — expansions fire as you type, in any app." />
+                  </Grid>
+                  <TextBox Watermark="The full replacement text…" Text="{Binding TargetText}"
+                           AcceptsReturn="True" TextWrapping="Wrap" MinHeight="92" />
+                  <TextBlock Classes="ter" FontSize="11"
+                             Text="Type the abbreviation anywhere and Keyko eats it and sends the replacement. Word-boundary aware; respects pause and app exclusions." />
+                </StackPanel>
+
                 <!-- system -->
                 <StackPanel Spacing="10" IsVisible="{Binding IsTypeSystem}">
                   <ComboBox ItemsSource="{Binding SystemActions}" SelectedIndex="{Binding SystemActionIndex}"
@@ -227,6 +282,30 @@
                 <StackPanel Orientation="Horizontal" Spacing="20">
                   <CheckBox IsChecked="{Binding Enabled}" Content="Enabled" />
                   <CheckBox IsChecked="{Binding ShowToast}" Content="Toast on launch" />
+                </StackPanel>
+
+                <!-- schedule -->
+                <StackPanel Spacing="8">
+                  <TextBlock Text="Run on a schedule (no hotkey needed)" Classes="sec" FontSize="12" />
+                  <StackPanel Orientation="Horizontal" Spacing="10">
+                    <ComboBox SelectedIndex="{Binding ScheduleIndex}" Width="180">
+                      <ComboBoxItem Content="No schedule" />
+                      <ComboBoxItem Content="Every N minutes" />
+                      <ComboBoxItem Content="Daily at time" />
+                    </ComboBox>
+                    <TextBox Width="90" Watermark="30" Text="{Binding ScheduleIntervalMinutes}"
+                             IsVisible="{Binding ScheduleIndex, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <TextBox Width="110" Watermark="09:00" Text="{Binding ScheduleDailyTime}"
+                             IsVisible="{Binding ScheduleIndex, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                  </StackPanel>
+                </StackPanel>
+
+                <!-- app scoping -->
+                <StackPanel Spacing="8">
+                  <TextBlock Text="Only in these apps (semicolon-separated, no .exe)" Classes="sec" FontSize="12" />
+                  <TextBox Watermark="empty = everywhere" Text="{Binding OnlyInApps}" />
+                  <TextBlock Text="Never in these apps" Classes="sec" FontSize="12" />
+                  <TextBox Watermark="empty = no exclusions" Text="{Binding NotInApps}" />
                 </StackPanel>
               </StackPanel>
             </Border>
