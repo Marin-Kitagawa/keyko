@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+body { margin: 0; background: #111; display: flex; flex-direction: column; gap: 30px; padding: 20px; }
+.variant { width: 1180px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); flex-shrink: 0; }
+.vlabel { color: #888; font: 600 13px/1 -apple-system, Segoe UI, sans-serif; margin: 0 0 8px 4px; text-transform: uppercase; letter-spacing: 2px; }
+
+/* ---------- shared structure ---------- */
+.win { display: grid; grid-template-rows: 56px 1fr; grid-template-columns: 230px 1fr; height: 660px; }
+.titlebar { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 0 14px; }
+.logo { width: 30px; height: 30px; border-radius: 9px; }
+.brand { font-size: 17px; }
+.pill { font-size: 10px; padding: 3px 9px; border-radius: 99px; opacity: .75; }
+.spacer { flex: 1; }
+.tb-icons { display: flex; gap: 14px; opacity: .75; font-size: 14px; }
+.side { display: flex; flex-direction: column; margin: 8px 4px 8px 10px; border-radius: 14px; padding: 10px; }
+.nav { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 3px; }
+.nav .ic { width: 18px; text-align: center; }
+.nav.active { font-weight: 600; }
+.side-space { flex: 1; }
+.stats { border-radius: 12px; padding: 13px; font-size: 12px; opacity: .85; }
+.stats b { font-size: 16px; font-weight: 600; }
+.content { padding: 22px 26px; overflow: hidden; }
+.h1 { font-size: 30px; margin-bottom: 4px; }
+.chips { display: flex; gap: 8px; margin: 14px 0 16px; }
+.chip { font-size: 12px; padding: 5px 14px; border-radius: 99px; }
+.chip.on { font-weight: 600; }
+.rows { display: flex; flex-direction: column; gap: 10px; }
+.row { display: grid; grid-template-columns: 30px 1fr auto auto; gap: 14px; align-items: center; border-radius: 14px; padding: 13px 18px; }
+.ric { font-size: 19px; opacity: .8; }
+.rname { font-size: 15px; }
+.rdesc { font-size: 12px; opacity: .55; margin-top: 2px; }
+.keys { font-size: 12px; padding: 5px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.14); letter-spacing: .5px; }
+.tgl { width: 40px; height: 22px; border-radius: 99px; position: relative; }
+.tgl::after { content: ""; position: absolute; right: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.never { font-size: 11px; opacity: .45; text-align: right; }
+</style>
+</head><body>
+
+<!-- ================ 1. BLOSSOM GLASS (current, refined) ================ -->
+<div class="vlabel">1 — Blossom Glass (refined current)</div>
+<div class="variant" style="background: linear-gradient(135deg,#1a1522,#221a30 55%,#251b33);">
+<div class="win" style="background: rgba(30,24,40,.55); backdrop-filter: blur(30px); color: #F5F2FA; font-family: 'Segoe UI', sans-serif;">
+  <div class="titlebar" style="border-bottom: 1px solid rgba(255,255,255,.06);">
+    <div class="logo" style="background: linear-gradient(135deg,#F472B6,#A78BFA);"></div>
+    <div class="brand" style="font-family: 'Playfair Display', serif;">Keyko</div>
+    <div class="pill" style="background: rgba(255,255,255,.08);">beta</div>
+    <div class="spacer"></div><div class="tb-icons">☀ ⚙ ─ □ ✕</div>
+  </div>
+  <div class="side" style="background: rgba(255,255,255,.05); margin-top: 8px;">
+    <div class="nav active" style="background: rgba(244,114,182,.18);"><span class="ic">⌘</span> Shortcuts</div>
+    <div class="nav"><span class="ic">⚙</span> Settings</div>
+    <div class="nav"><span class="ic">◔</span> Insights</div>
+    <div class="nav"><span class="ic">ⓘ</span> About</div>
+    <div class="side-space"></div>
+    <div class="stats" style="background: rgba(255,255,255,.05);">
+      <b style="color:#F472B6">5</b> of <b>5</b> hotkeys ready<div style="opacity:.5;margin-top:4px">▷ 0 total launches</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="h1" style="font-family: 'Lavishly Yours', cursive;">Shortcuts</div>
+    <div class="chips">
+      <div class="chip on" style="background: rgba(244,114,182,.2);">All · 5</div>
+      <div class="chip" style="background: rgba(255,255,255,.06);">Media · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.06);">System · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.06);">Tools · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.06);">Web · 2</div>
+    </div>
+    <div class="rows">
+      <div class="row" style="background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07);">
+        <div class="ric" style="color:#A5B4FC;">📁</div>
+        <div><div class="rname" style="font-weight:600;">File Explorer</div><div class="rdesc" style="font-style:italic;">Open your user folder</div></div>
+        <div class="keys">Ctrl + Alt + E</div><div class="tgl" style="background:#F472B6;"></div>
+      </div>
+      <div class="row" style="background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07);">
+        <div class="ric" style="color:#F0ABFC;">🖥️</div>
+        <div><div class="rname" style="font-weight:600;">Command Prompt</div><div class="rdesc" style="font-style:italic;">Classic terminal</div></div>
+        <div class="keys">Ctrl + Alt + N</div><div class="tgl" style="background:#F472B6;"></div>
+      </div>
+      <div class="row" style="background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07);">
+        <div class="ric" style="color:#7DD3FC;">🌐</div>
+        <div><div class="rname" style="font-weight:600;">Google</div><div class="rdesc" style="font-style:italic;">Search the web</div></div>
+        <div class="keys">Ctrl + Alt + G</div><div class="tgl" style="background:#F472B6;"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ================ 2. SAKURA PAPER (light, warm blush) ================ -->
+<div class="vlabel">2 — Sakura Paper (light, soft blush)</div>
+<div class="variant" style="background: #FBEFF2;">
+<div class="win" style="background: #FDF6F8; color: #43303E; font-family: 'Segoe UI', sans-serif;">
+  <div class="titlebar" style="border-bottom: 1px solid #F3DFE6;">
+    <div class="logo" style="background: linear-gradient(135deg,#F9A8C9,#C9A7EB);"></div>
+    <div class="brand" style="font-family: 'Quicksand', sans-serif; font-weight: 600; color: #5B4458;">Keyko</div>
+    <div class="pill" style="background: #F3DFE6; color: #A87895;">beta</div>
+    <div class="spacer"></div><div class="tb-icons">☀ ⚙ ─ □ ✕</div>
+  </div>
+  <div class="side" style="background: #FAEDF2; margin-top: 8px;">
+    <div class="nav active" style="background: #F7D6E3; color: #8A4B6B;"><span class="ic">⌘</span> Shortcuts</div>
+    <div class="nav"><span class="ic">⚙</span> Settings</div>
+    <div class="nav"><span class="ic">◔</span> Insights</div>
+    <div class="nav"><span class="ic">ⓘ</span> About</div>
+    <div class="side-space"></div>
+    <div class="stats" style="background: #F7E8EE; color: #8A6B7E;">
+      <b style="color:#E8749E">5</b> of <b>5</b> hotkeys ready<div style="opacity:.6;margin-top:4px">▷ 0 total launches</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="h1" style="font-family: 'Quicksand', sans-serif; font-weight: 600; color: #5B4458;">Shortcuts</div>
+    <div class="chips">
+      <div class="chip on" style="background: #F7D6E3; color: #8A4B6B;">All · 5</div>
+      <div class="chip" style="background: #F6E7EE;">Media · 1</div>
+      <div class="chip" style="background: #F6E7EE;">System · 1</div>
+      <div class="chip" style="background: #F6E7EE;">Tools · 1</div>
+      <div class="chip" style="background: #F6E7EE;">Web · 2</div>
+    </div>
+    <div class="rows">
+      <div class="row" style="background: #FFFFFF; border: 1px solid #F3DFE6; box-shadow: 0 2px 8px rgba(180,120,150,.08);">
+        <div class="ric" style="color:#E8749E;">📁</div>
+        <div><div class="rname" style="font-weight:600; color:#43303E;">File Explorer</div><div class="rdesc" style="color:#B08CA0;">Open your user folder</div></div>
+        <div class="keys" style="background:#FAEDF2; border-color:#F3DFE6; color:#8A4B6B;">Ctrl + Alt + E</div><div class="tgl" style="background:#F9A8C9;"></div>
+      </div>
+      <div class="row" style="background: #FFFFFF; border: 1px solid #F3DFE6; box-shadow: 0 2px 8px rgba(180,120,150,.08);">
+        <div class="ric" style="color:#C084FC;">🖥️</div>
+        <div><div class="rname" style="font-weight:600; color:#43303E;">Command Prompt</div><div class="rdesc" style="color:#B08CA0;">Classic terminal</div></div>
+        <div class="keys" style="background:#FAEDF2; border-color:#F3DFE6; color:#8A4B6B;">Ctrl + Alt + N</div><div class="tgl" style="background:#F9A8C9;"></div>
+      </div>
+      <div class="row" style="background: #FFFFFF; border: 1px solid #F3DFE6; box-shadow: 0 2px 8px rgba(180,120,150,.08);">
+        <div class="ric" style="color:#7DD3FC;">🌐</div>
+        <div><div class="rname" style="font-weight:600; color:#43303E;">Google</div><div class="rdesc" style="color:#B08CA0;">Search the web</div></div>
+        <div class="keys" style="background:#FAEDF2; border-color:#F3DFE6; color:#8A4B6B;">Ctrl + Alt + G</div><div class="tgl" style="background:#F9A8C9;"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ================ 3. CREAM CAFÉ ================ -->
+<div class="vlabel">3 — Cream Café (light, warm mocha)</div>
+<div class="variant" style="background: #F3ECE4;">
+<div class="win" style="background: #FBF7F1; color: #4A3B30; font-family: 'Segoe UI', sans-serif;">
+  <div class="titlebar" style="border-bottom: 1px solid #EDE2D4;">
+    <div class="logo" style="background: linear-gradient(135deg,#D4A574,#B08968);"></div>
+    <div class="brand" style="font-family: 'Fraunces', serif; color: #4A3B30;">Keyko</div>
+    <div class="pill" style="background: #EDE2D4; color: #A08A70;">beta</div>
+    <div class="spacer"></div><div class="tb-icons">☀ ⚙ ─ □ ✕</div>
+  </div>
+  <div class="side" style="background: #F5EEE5; margin-top: 8px;">
+    <div class="nav active" style="background: #EADBC8; color: #6B5040;"><span class="ic">⌘</span> Shortcuts</div>
+    <div class="nav"><span class="ic">⚙</span> Settings</div>
+    <div class="nav"><span class="ic">◔</span> Insights</div>
+    <div class="nav"><span class="ic">ⓘ</span> About</div>
+    <div class="side-space"></div>
+    <div class="stats" style="background: #F0E6D8; color: #8A7560;">
+      <b style="color:#B08968">5</b> of <b>5</b> hotkeys ready<div style="opacity:.6;margin-top:4px">▷ 0 total launches</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="h1" style="font-family: 'Fraunces', serif; color: #4A3B30;">Shortcuts</div>
+    <div class="chips">
+      <div class="chip on" style="background: #EADBC8; color: #6B5040;">All · 5</div>
+      <div class="chip" style="background: #F0E6D8;">Media · 1</div>
+      <div class="chip" style="background: #F0E6D8;">System · 1</div>
+      <div class="chip" style="background: #F0E6D8;">Tools · 1</div>
+      <div class="chip" style="background: #F0E6D8;">Web · 2</div>
+    </div>
+    <div class="rows">
+      <div class="row" style="background: #FFFFFF; border: 1px solid #EDE2D4;">
+        <div class="ric" style="color:#B08968;">📁</div>
+        <div><div class="rname" style="font-weight:600; color:#4A3B30;">File Explorer</div><div class="rdesc" style="color:#B5A290;">Open your user folder</div></div>
+        <div class="keys" style="background:#F5EEE5; border-color:#EDE2D4; color:#8A7560;">Ctrl + Alt + E</div><div class="tgl" style="background:#D4A574;"></div>
+      </div>
+      <div class="row" style="background: #FFFFFF; border: 1px solid #EDE2D4;">
+        <div class="ric" style="color:#C084FC;">🖥️</div>
+        <div><div class="rname" style="font-weight:600; color:#4A3B30;">Command Prompt</div><div class="rdesc" style="color:#B5A290;">Classic terminal</div></div>
+        <div class="keys" style="background:#F5EEE5; border-color:#EDE2D4; color:#8A7560;">Ctrl + Alt + N</div><div class="tgl" style="background:#D4A574;"></div>
+      </div>
+      <div class="row" style="background: #FFFFFF; border: 1px solid #EDE2D4;">
+        <div class="ric" style="color:#93C5FD;">🌐</div>
+        <div><div class="rname" style="font-weight:600; color:#4A3B30;">Google</div><div class="rdesc" style="color:#B5A290;">Search the web</div></div>
+        <div class="keys" style="background:#F5EEE5; border-color:#EDE2D4; color:#8A7560;">Ctrl + Alt + G</div><div class="tgl" style="background:#D4A574;"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ================ 4. ROSE NOIR ================ -->
+<div class="vlabel">4 — Rose Noir (dark, elegant rose)</div>
+<div class="variant" style="background: #0D0A0C;">
+<div class="win" style="background: linear-gradient(160deg,#161014,#1D1318); color: #EDE3E8; font-family: 'Segoe UI', sans-serif;">
+  <div class="titlebar" style="border-bottom: 1px solid rgba(244,114,182,.1);">
+    <div class="logo" style="background: linear-gradient(135deg,#FB7185,#C084FC);"></div>
+    <div class="brand" style="font-family: 'Cormorant Garamond', serif; font-size: 19px; letter-spacing: 1px;">Keyko</div>
+    <div class="pill" style="background: rgba(251,113,133,.12); color: #FB7185;">beta</div>
+    <div class="spacer"></div><div class="tb-icons">☀ ⚙ ─ □ ✕</div>
+  </div>
+  <div class="side" style="background: rgba(251,113,133,.05); margin-top: 8px; border: 1px solid rgba(251,113,133,.08);">
+    <div class="nav active" style="background: rgba(251,113,133,.14); color: #FDA4AF;"><span class="ic">⌘</span> Shortcuts</div>
+    <div class="nav"><span class="ic">⚙</span> Settings</div>
+    <div class="nav"><span class="ic">◔</span> Insights</div>
+    <div class="nav"><span class="ic">ⓘ</span> About</div>
+    <div class="side-space"></div>
+    <div class="stats" style="background: rgba(251,113,133,.07); color: #C9A3B0;">
+      <b style="color:#FB7185">5</b> of <b>5</b> hotkeys ready<div style="opacity:.5;margin-top:4px">▷ 0 total launches</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="h1" style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #FDA4AF;">Shortcuts</div>
+    <div class="chips">
+      <div class="chip on" style="background: rgba(251,113,133,.16); color: #FDA4AF;">All · 5</div>
+      <div class="chip" style="background: rgba(255,255,255,.05); color: #C9A3B0;">Media · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.05); color: #C9A3B0;">System · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.05); color: #C9A3B0;">Tools · 1</div>
+      <div class="chip" style="background: rgba(255,255,255,.05); color: #C9A3B0;">Web · 2</div>
+    </div>
+    <div class="rows">
+      <div class="row" style="background: rgba(255,255,255,.035); border: 1px solid rgba(251,113,133,.1);">
+        <div class="ric" style="color:#FDA4AF;">📁</div>
+        <div><div class="rname" style="font-weight:600;">File Explorer</div><div class="rdesc" style="font-style:italic; color:#A3798A;">Open your user folder</div></div>
+        <div class="keys" style="border-color: rgba(251,113,133,.2); color: #D4A5B5;">Ctrl + Alt + E</div><div class="tgl" style="background:#FB7185;"></div>
+      </div>
+      <div class="row" style="background: rgba(255,255,255,.035); border: 1px solid rgba(251,113,133,.1);">
+        <div class="ric" style="color:#C084FC;">🖥️</div>
+        <div><div class="rname" style="font-weight:600;">Command Prompt</div><div class="rdesc" style="font-style:italic; color:#A3798A;">Classic terminal</div></div>
+        <div class="keys" style="border-color: rgba(251,113,133,.2); color: #D4A5B5;">Ctrl + Alt + N</div><div class="tgl" style="background:#FB7185;"></div>
+      </div>
+      <div class="row" style="background: rgba(255,255,255,.035); border: 1px solid rgba(251,113,133,.1);">
+        <div class="ric" style="color:#7DD3FC;">🌐</div>
+        <div><div class="rname" style="font-weight:600;">Google</div><div class="rdesc" style="font-style:italic; color:#A3798A;">Search the web</div></div>
+        <div class="keys" style="border-color: rgba(251,113,133,.2); color: #D4A5B5;">Ctrl + Alt + G</div><div class="tgl" style="background:#FB7185;"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ================ 5. STRAWBERRY MILK ================ -->
+<div class="vlabel">5 — Strawberry Milk (light, bubbly)</div>
+<div class="variant" style="background: #FFF0F3;">
+<div class="win" style="background: #FFF8FA; color: #503044; font-family: 'Segoe UI', sans-serif;">
+  <div class="titlebar" style="border-bottom: 2px solid #FFD6E0;">
+    <div class="logo" style="background: linear-gradient(135deg,#FF8FAB,#FFB7C5); border-radius: 12px;"></div>
+    <div class="brand" style="font-family: 'Baloo 2', sans-serif; font-weight: 700; color: #D6336C;">Keyko</div>
+    <div class="pill" style="background: #FFE0E8; color: #C25582;">beta</div>
+    <div class="spacer"></div><div class="tb-icons">☀ ⚙ ─ □ ✕</div>
+  </div>
+  <div class="side" style="background: #FFE8EE; margin-top: 8px; border-radius: 18px;">
+    <div class="nav active" style="background: #FFC2D4; color: #A82653;"><span class="ic">⌘</span> Shortcuts</div>
+    <div class="nav"><span class="ic">⚙</span> Settings</div>
+    <div class="nav"><span class="ic">◔</span> Insights</div>
+    <div class="nav"><span class="ic">ⓘ</span> About</div>
+    <div class="side-space"></div>
+    <div class="stats" style="background: #FFD6E0; color: #A8557E;">
+      <b style="color:#D6336C">5</b> of <b>5</b> hotkeys ready<div style="opacity:.6;margin-top:4px">▷ 0 total launches</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="h1" style="font-family: 'Baloo 2', sans-serif; font-weight: 700; color: #D6336C;">Shortcuts</div>
+    <div class="chips">
+      <div class="chip on" style="background: #FFC2D4; color: #A82653;">All · 5</div>
+      <div class="chip" style="background: #FFE0E8;">Media · 1</div>
+      <div class="chip" style="background: #FFE0E8;">System · 1</div>
+      <div class="chip" style="background: #FFE0E8;">Tools · 1</div>
+      <div class="chip" style="background: #FFE0E8;">Web · 2</div>
+    </div>
+    <div class="rows">
+      <div class="row" style="background: #FFFFFF; border: 2px solid #FFD6E0; border-radius: 18px; box-shadow: 0 3px 12px rgba(255,143,171,.15);">
+        <div class="ric" style="color:#FF6B9D;">📁</div>
+        <div><div class="rname" style="font-weight:700; color:#503044;">File Explorer</div><div class="rdesc" style="color:#C4899E;">Open your user folder</div></div>
+        <div class="keys" style="background:#FFF0F3; border-color:#FFD6E0; color:#C25582; border-radius: 10px;">Ctrl + Alt + E</div><div class="tgl" style="background:#FF8FAB;"></div>
+      </div>
+      <div class="row" style="background: #FFF5F8; border: 2px solid #FFD6E0; border-radius: 18px; box-shadow: 0 3px 12px rgba(255,143,171,.15);">
+        <div class="ric" style="color:#B197FC;">🖥️</div>
+        <div><div class="rname" style="font-weight:700; color:#503044;">Command Prompt</div><div class="rdesc" style="color:#C4899E;">Classic terminal</div></div>
+        <div class="keys" style="background:#FFF0F3; border-color:#FFD6E0; color:#C25582; border-radius: 10px;">Ctrl + Alt + N</div><div class="tgl" style="background:#FF8FAB;"></div>
+      </div>
+      <div class="row" style="background: #FFF5F8; border: 2px solid #FFD6E0; border-radius: 18px; box-shadow: 0 3px 12px rgba(255,143,171,.15);">
+        <div class="ric" style="color:#74C0FC;">🌐</div>
+        <div><div class="rname" style="font-weight:700; color:#503044;">Google</div><div class="rdesc" style="color:#C4899E;">Search the web</div></div>
+        <div class="keys" style="background:#FFF0F3; border-color:#FFD6E0; color:#C25582; border-radius: 10px;">Ctrl + Alt + G</div><div class="tgl" style="background:#FF8FAB;"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+</body></html>
