@@ -31,8 +31,9 @@
   </Style>
 
   <Style Selector="TextBlock.h2">
-    <Setter Property="FontSize" Value="23" />
-    <Setter Property="FontFamily" Value="avares://Keyko/Assets/Fonts/LavishlyYours-Regular.ttf#Lavishly Yours" />
+    <Setter Property="FontSize" Value="16" />
+    <Setter Property="FontWeight" Value="Normal" />
+    <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
   </Style>
 
   <!-- Segoe Fluent / MDL2 glyph helper -->

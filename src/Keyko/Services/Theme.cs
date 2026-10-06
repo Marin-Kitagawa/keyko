@@ -88,8 +88,8 @@ public static class UiTheme
         if (IsDark)
         {
             Set("TextPrimary",       C(0xFB, 0xF3, 0xF8));
-            Set("TextSecondary",     C(0xC2, 0xB0, 0xC8));
-            Set("TextTertiary",      C(0x92, 0x82, 0x9E));
+            Set("TextSecondary",     C(0xCB, 0xBC, 0xD2));
+            Set("TextTertiary",      C(0x9E, 0x92, 0xAA));
             Set("CardBg",            C(0xFF, 0xFF, 0xFF, 0x0A));
             Set("CardBgHover",       C(0xFF, 0xFF, 0xFF, 0x14));
             Set("CardBgStrong",      C(0x22, 0x18, 0x2B, 0xF2));
@@ -122,8 +122,8 @@ public static class UiTheme
         else
         {
             Set("TextPrimary",       C(0x30, 0x22, 0x33));
-            Set("TextSecondary",     C(0x6E, 0x5A, 0x74));
-            Set("TextTertiary",      C(0xA2, 0x8E, 0xAA));
+            Set("TextSecondary",     C(0x62, 0x50, 0x66));
+            Set("TextTertiary",      C(0x8E, 0x7C, 0x96));
             Set("CardBg",            C(0xFF, 0xFF, 0xFF, 0x8C));
             Set("CardBgHover",       C(0xFF, 0xFF, 0xFF, 0xD0));
             Set("CardBgStrong",      C(0xFF, 0xFF, 0xFF, 0xFA));
